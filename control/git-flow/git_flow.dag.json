@@ -1,0 +1,83 @@
+{
+  "kind": "git_flow_dag.v1",
+  "start": "contract_branch_open",
+  "nodes": [
+    {
+      "id": "contract_branch_open",
+      "next": [
+        "authority_gate"
+      ]
+    },
+    {
+      "id": "authority_gate",
+      "next": [
+        "contract_package_gate"
+      ]
+    },
+    {
+      "id": "contract_package_gate",
+      "next": [
+        "merge_contract_to_main"
+      ]
+    },
+    {
+      "id": "merge_contract_to_main",
+      "next": [
+        "spawn_bounded_batch_integration_worktree"
+      ]
+    },
+    {
+      "id": "spawn_bounded_batch_integration_worktree",
+      "next": [
+        "apply_batch_patch"
+      ]
+    },
+    {
+      "id": "apply_batch_patch",
+      "next": [
+        "artifact_conformance_gate"
+      ]
+    },
+    {
+      "id": "artifact_conformance_gate",
+      "next": [
+        "promotion_decision"
+      ]
+    },
+    {
+      "id": "promotion_decision",
+      "next": [
+        "promote_patch_to_main",
+        "close_batch"
+      ]
+    },
+    {
+      "id": "promote_patch_to_main",
+      "next": [
+        "main_authority_gate"
+      ]
+    },
+    {
+      "id": "main_authority_gate",
+      "next": [
+        "main_contract_package_gate"
+      ]
+    },
+    {
+      "id": "main_contract_package_gate",
+      "next": [
+        "main_artifact_conformance_gate"
+      ]
+    },
+    {
+      "id": "main_artifact_conformance_gate",
+      "next": [
+        "close_batch"
+      ]
+    },
+    {
+      "id": "close_batch",
+      "next": []
+    }
+  ]
+}

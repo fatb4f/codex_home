@@ -1,0 +1,5 @@
+{
+  "git-flow": "workflow.git_flow.integration_worktree",
+  "contract-first": "workflow.contract_first",
+  "plan": "workflow.contract_first"
+}

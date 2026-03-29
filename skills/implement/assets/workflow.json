@@ -1,0 +1,86 @@
+{
+  "version": "1.0",
+  "workflow": "implement",
+  "description": "Implement skill workflow for generating and validating execution packets plus response contract outputs under $wt/IMPLEMENT.",
+  "start": "I0_input",
+  "nodes": [
+    {
+      "id": "I0_input",
+      "phase": "IMPLEMENT",
+      "action": "bind_implement_inputs",
+      "outputs": [
+        "wt",
+        "objective",
+        "request_instance",
+        "contract_bindings",
+        "decision"
+      ],
+      "next": [
+        "I1_generate"
+      ]
+    },
+    {
+      "id": "I1_generate",
+      "phase": "IMPLEMENT",
+      "action": "generate_implement_packet",
+      "uses_script": "scripts/generate_implement_packet.py",
+      "artifact_root": "$wt/IMPLEMENT",
+      "outputs": [
+        "implement_packet",
+        "implement_packet_meta"
+      ],
+      "next": [
+        "I2_emit_response_contract"
+      ]
+    },
+    {
+      "id": "I2_emit_response_contract",
+      "phase": "IMPLEMENT",
+      "action": "emit_response_contract_outputs",
+      "outputs": [
+        "response_instance",
+        "response_manifest",
+        "response_validation"
+      ],
+      "next": [
+        "I3_validate"
+      ]
+    },
+    {
+      "id": "I3_validate",
+      "phase": "IMPLEMENT",
+      "action": "validate_implement_packet_and_response_contract",
+      "uses_script": "scripts/validate_implement_packet.py",
+      "outputs": [
+        "implement_validation"
+      ],
+      "guards": {
+        "valid": {
+          "when": "implement_validation == PASS",
+          "goto": "I4_exit"
+        },
+        "invalid": {
+          "when": "implement_validation != PASS",
+          "goto": "I1_generate"
+        }
+      }
+    },
+    {
+      "id": "I4_exit",
+      "phase": "IMPLEMENT",
+      "action": "prepare_promotion_candidate",
+      "outputs": [
+        "execution_artifacts",
+        "gate_outcomes",
+        "closeout_decision"
+      ],
+      "next": []
+    }
+  ],
+  "invariants": [
+    "implement_artifacts_under_wt_implement",
+    "dry_run_before_apply",
+    "response_contract_validation_required",
+    "apply_requires_evidence_gate_pass"
+  ]
+}

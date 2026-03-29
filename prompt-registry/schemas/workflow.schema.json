@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string"},
+    "kind": {"type": "string"},
+    "description": {"type": "string"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_of_truth_root": {"type": "string"},
+        "source_of_truth_refs": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "overlay_role": {
+          "type": "string",
+          "enum": ["retrieval_overlay", "prompt_overlay"]
+        }
+      },
+      "required": [
+        "source_of_truth_root",
+        "source_of_truth_refs",
+        "overlay_role"
+      ]
+    },
+    "steps": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["id", "kind", "steps"]
+}

@@ -1,0 +1,62 @@
+{
+  "kind": "git_flow_manifest.v1",
+  "authority": {
+    "default_branch": "main",
+    "contract_branch_role": "introduces child contracts, schemas, workflows, validators"
+  },
+  "layers": [
+    "contract",
+    "shell",
+    "implementation"
+  ],
+  "batch_policy": {
+    "unit": "bounded_batch",
+    "integration_surface": "one integration worktree per bounded batch",
+    "worktree_is_audit_object": false,
+    "evidence_is_audit_object": true,
+    "promotion_mode": "patch_promotion"
+  },
+  "promotion": {
+    "mode": "patch_promotion",
+    "target": "main",
+    "allow_direct_branch_history_promotion": false
+  },
+  "ci_gates": [
+    {
+      "id": "authority_gate",
+      "scope": "ssot_parent_contract_conformance",
+      "runs_on": [
+        "contract_pr",
+        "main"
+      ]
+    },
+    {
+      "id": "contract_package_gate",
+      "scope": "child_contract_validity",
+      "runs_on": [
+        "contract_pr",
+        "main"
+      ]
+    },
+    {
+      "id": "artifact_conformance_gate",
+      "scope": "runtime_artifacts_conform_to_child_contract",
+      "runs_on": [
+        "integration_worktree",
+        "main"
+      ]
+    }
+  ],
+  "evidence": {
+    "required_fields": [
+      "integration_id",
+      "base_main_commit",
+      "contract_commit",
+      "bounded_batch_id",
+      "patch_hash",
+      "validation_refs",
+      "promoted_commit",
+      "status"
+    ]
+  }
+}

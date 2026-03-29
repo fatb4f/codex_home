@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Contract bindings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "contract_root",
+    "context_ref",
+    "anchor_registry_ref",
+    "request_schema_ref",
+    "response_schema_ref",
+    "review_response_schema_ref",
+    "archive_envelope_schema_ref",
+    "handoff_contract_ref",
+    "git_flow_manifest_ref",
+    "batch_manifest_schema_ref",
+    "integration_gate_plan_schema_ref",
+    "promotion_plan_schema_ref"
+  ],
+  "properties": {
+    "kind": {
+      "const": "contract_bindings.v1"
+    },
+    "contract_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "anchor_registry_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "response_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_response_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "archive_envelope_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "response_to_next_request_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "handoff_contract_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "git_flow_manifest_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "batch_manifest_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "integration_gate_plan_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "promotion_plan_schema_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_registry_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

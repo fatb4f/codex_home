@@ -1,0 +1,187 @@
+{
+  "kind": "json_tool.telemetry_artifacts.v1",
+  "generated_at_utc": "2026-03-08T00:00:00Z",
+  "description": "Canonical artifact taxonomy for contract-first telemetry wrangling over JSONL event streams.",
+  "phase_objective": "Normalize raw machine-generated events into stable internal contracts, then derive traces, signals, and promoted patterns.",
+  "source_streams": [
+    "codex_cli_jsonl",
+    "git_log",
+    "artifact_metadata",
+    "run_or_session_trace_fragments",
+    "review_outcomes"
+  ],
+  "artifact_ladder": [
+    {
+      "id": "raw_event.envelope.v1",
+      "stage": "ingest",
+      "role": "lossless source-carrier envelope before domain normalization",
+      "contract_model": "cloudevents_inspired",
+      "required_fields": [
+        "specversion",
+        "id",
+        "type",
+        "source",
+        "time",
+        "datacontenttype",
+        "data"
+      ],
+      "recommended_fields": [
+        "subject",
+        "dataschema",
+        "source_kind",
+        "source_ref",
+        "ingested_at",
+        "session_id",
+        "run_id",
+        "sequence_no",
+        "parent_event_id"
+      ],
+      "notes": [
+        "Use CloudEvents-style envelope semantics for identity, source, type, and time.",
+        "Preserve raw provenance before source-specific normalization.",
+        "This is an ingest carrier, not the final domain event contract."
+      ]
+    },
+    {
+      "id": "telemetry.event.v1",
+      "stage": "normalize",
+      "role": "normalized codex or runtime telemetry event",
+      "source_inputs": [
+        "raw_event.envelope.v1"
+      ],
+      "required_fields": [
+        "event_id",
+        "event_type",
+        "source",
+        "source_ref",
+        "ts_observed",
+        "session_id",
+        "payload"
+      ],
+      "notes": [
+        "This is the canonical normalized form for telemetry-originated events.",
+        "Source-specific details stay inside payload, not top-level ad hoc fields."
+      ]
+    },
+    {
+      "id": "git.event.v1",
+      "stage": "normalize",
+      "role": "normalized git commit or history event",
+      "source_inputs": [
+        "git_log",
+        "raw_event.envelope.v1"
+      ],
+      "required_fields": [
+        "event_id",
+        "event_type",
+        "repo_id",
+        "commit_hash",
+        "ts_observed",
+        "payload"
+      ]
+    },
+    {
+      "id": "artifact.event.v1",
+      "stage": "normalize",
+      "role": "normalized artifact emission or mutation event",
+      "source_inputs": [
+        "artifact_metadata",
+        "raw_event.envelope.v1"
+      ],
+      "required_fields": [
+        "event_id",
+        "artifact_id",
+        "artifact_kind",
+        "artifact_path",
+        "ts_observed",
+        "payload"
+      ]
+    },
+    {
+      "id": "session.trace.v1",
+      "stage": "aggregate",
+      "role": "ordered grouped event stream for a session, run, or task lineage",
+      "source_inputs": [
+        "telemetry.event.v1",
+        "git.event.v1",
+        "artifact.event.v1"
+      ],
+      "required_fields": [
+        "trace_id",
+        "trace_kind",
+        "source_scope",
+        "event_refs",
+        "ordered_events",
+        "started_at",
+        "ended_at"
+      ],
+      "notes": [
+        "Traces are grouped after normalization, never directly from raw logs.",
+        "Grouping rules must be deterministic and versioned."
+      ]
+    },
+    {
+      "id": "pattern.signal.v1",
+      "stage": "derive",
+      "role": "machine-derived candidate finding from one or more traces",
+      "source_inputs": [
+        "session.trace.v1"
+      ],
+      "required_fields": [
+        "signal_id",
+        "signal_type",
+        "source_trace_refs",
+        "derived_at",
+        "payload",
+        "confidence_hint"
+      ],
+      "notes": [
+        "Signals are candidate findings, not accepted reusable patterns.",
+        "Derivation rules should be jq-driven and deterministic."
+      ]
+    },
+    {
+      "id": "pattern.review.v1",
+      "stage": "review",
+      "role": "reviewed decision over a candidate signal",
+      "source_inputs": [
+        "pattern.signal.v1"
+      ],
+      "required_fields": [
+        "review_id",
+        "signal_ref",
+        "decision",
+        "reasons",
+        "reviewed_at"
+      ],
+      "notes": [
+        "Use this to separate machine-derived signal from accepted or rejected pattern judgment."
+      ]
+    },
+    {
+      "id": "pattern.set.v1",
+      "stage": "promote",
+      "role": "versioned collection of promoted reusable patterns",
+      "source_inputs": [
+        "pattern.review.v1"
+      ],
+      "required_fields": [
+        "pattern_set_id",
+        "version",
+        "patterns",
+        "promoted_at",
+        "source_reviews"
+      ],
+      "notes": [
+        "Promotion should be gated and auditable.",
+        "Pattern sets are the reusable output of the pipeline."
+      ]
+    }
+  ],
+  "stage_rules": [
+    "Do not derive traces from raw logs before event normalization.",
+    "Do not promote pattern signals directly into pattern sets.",
+    "Keep raw provenance attached through every stage via refs and hashes.",
+    "Render reports only after contracts, traces, and signal rules stabilize."
+  ]
+}

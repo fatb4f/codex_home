@@ -1,0 +1,5 @@
+{
+  "name": "review",
+  "workflow_preferences": ["workflow.contract_first", "workflow.git_flow.integration_worktree"],
+  "snippet_order": ["validation", "planning", "promotion", "evidence"]
+}

@@ -1,0 +1,150 @@
+{
+  "version": "1.0",
+  "workflow": "loop",
+  "description": "Declarative phase workflow for loop orchestration. Contract validation is explicit at the verify boundary.",
+  "start": "N0_initialize",
+  "nodes": [
+    {
+      "id": "N0_initialize",
+      "phase": "INIT",
+      "action": "create_worktree_context",
+      "uses_asset": "assets/init.asset.json",
+      "outputs": [
+        "init",
+        "loop_context",
+        "wt",
+        "contract_root",
+        "ledger_wt"
+      ],
+      "next": [
+        "N1_plan"
+      ]
+    },
+    {
+      "id": "N1_plan",
+      "phase": "PLAN",
+      "action": "run_plan_skill",
+      "artifact_root": "$wt/PLAN",
+      "outputs": [
+        "plan_packet",
+        "decision",
+        "request_instance",
+        "request_validation",
+        "contract_bindings",
+        "batch_manifest",
+        "integration_gate_plan",
+        "promotion_plan"
+      ],
+      "next": [
+        "N2_decision"
+      ]
+    },
+    {
+      "id": "N2_decision",
+      "phase": "DECISION",
+      "action": "evaluate_decision_gate",
+      "guards": {
+        "approved": {
+          "when": "decision == APPROVED",
+          "goto": "N3_implement"
+        },
+        "rejected_or_needs_info": {
+          "when": "decision in [REJECTED, NEEDS_INFO]",
+          "goto": "N1_plan"
+        }
+      }
+    },
+    {
+      "id": "N3_implement",
+      "phase": "IMPLEMENT",
+      "action": "run_implement_skill",
+      "requires": [
+        "handoff_contract_valid",
+        "decision == APPROVED"
+      ],
+      "artifact_root": "$wt/IMPLEMENT",
+      "outputs": [
+        "implement_packet",
+        "response_instance",
+        "response_manifest",
+        "response_validation"
+      ],
+      "next": [
+        "N4_verify"
+      ]
+    },
+    {
+      "id": "N4_verify",
+      "phase": "VERIFY",
+      "action": "validate_contract_bridge_live",
+      "uses_script": "scripts/validate_contract_bridge.py",
+      "outputs": [
+        "verification",
+        "transition_gate",
+        "retry_count",
+        "retry_reason_code"
+      ],
+      "retry_policy": {
+        "max_retries": 1,
+        "on_exhausted": "DENY"
+      },
+      "guards": {
+        "pass": {
+          "when": "transition_gate == PASS",
+          "goto": "N5_terminate"
+        },
+        "retry": {
+          "when": "transition_gate != PASS and retry_count < 1",
+          "emit": [
+            "retry_reason_code = verification_failed_retry_budget_available"
+          ],
+          "goto": "N3_implement"
+        },
+        "deny": {
+          "when": "transition_gate != PASS and retry_count >= 1",
+          "emit": [
+            "retry_reason_code = verification_failed_retry_budget_exhausted"
+          ],
+          "goto": "N4_deny"
+        }
+      }
+    },
+    {
+      "id": "N4_deny",
+      "phase": "VERIFY",
+      "action": "emit_terminal_deny",
+      "outputs": [
+        "verification_terminal",
+        "deny_reason",
+        "retry_budget_exhausted"
+      ],
+      "next": [
+        "N5_terminate"
+      ]
+    },
+    {
+      "id": "N5_terminate",
+      "phase": "TERMINATE",
+      "action": "archive_close_cleanup",
+      "uses_asset": "assets/terminate.asset.json",
+      "outputs": [
+        "terminate",
+        "reports_archive_ref",
+        "closeout_summary",
+        "rollback_status",
+        "ledger_bundle_ref"
+      ],
+      "next": []
+    }
+  ],
+  "invariants": [
+    "no_execution_before_decision_approved",
+    "plan_emits_request_and_batch_outputs",
+    "decision_phase_is_explicit",
+    "implement_emits_response_outputs",
+    "verify_uses_live_validation",
+    "terminate_requires_verified_contract_chain",
+    "verify_retry_budget_is_bounded",
+    "verify_failure_emits_reason_code"
+  ]
+}

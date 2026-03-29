@@ -1,0 +1,52 @@
+{
+  "kind": "implementation_plan.v3",
+  "plan_id": "request_response_contract_git_flow_bridge_v3",
+  "repo_root": ".",
+  "objective": "a semantic request-response contract aligned to contract-first git flow and bounded-batch patch promotion",
+  "workflow_authority": {
+    "git_flow_manifest_ref": "control/git-flow/git_flow.manifest.json",
+    "git_flow_dag_ref": "control/git-flow/git_flow.dag.json",
+    "prompt_registry_ref": "prompt-registry/manifest.json",
+    "main_prompt_mutation": false
+  },
+  "controller_integration": {
+    "phase_authority": "skills/loop/assets/handoff.contract.json + skills/loop/assets/workflow.json",
+    "artifact_authority": [
+      "context/plan-review-loop.context.jsonld",
+      "schemas/request.schema.json",
+      "schemas/response.schema.json",
+      "schemas/review_response.schema.json",
+      "schemas/archive_envelope.schema.json",
+      "schemas/anchor_registry.schema.json",
+      "schemas/contract_bindings.schema.json",
+      "schemas/batch_manifest.schema.json",
+      "schemas/integration_gate_plan.schema.json",
+      "schemas/promotion_plan.schema.json"
+    ]
+  },
+  "required_plan_outputs": [
+    "PLAN/README.md",
+    "PLAN/packet.meta.json",
+    "PLAN/request.instance.json",
+    "PLAN/request.validation.json",
+    "PLAN/contract.bindings.json",
+    "PLAN/batch.manifest.json",
+    "PLAN/integration_gate.plan.json",
+    "PLAN/promotion.plan.json"
+  ],
+  "required_implement_outputs": [
+    "IMPLEMENT/IMPLEMENT.md",
+    "IMPLEMENT/packet.meta.json",
+    "IMPLEMENT/response.instance.json",
+    "IMPLEMENT/response.manifest.json",
+    "IMPLEMENT/response.validation.json"
+  ],
+  "rules": [
+    "main_prompt_remains_unchanged",
+    "prompt_registry_shipped_as_directory_only",
+    "skills_remain_under_skills_root",
+    "bounded_batch_is_the_default_delivery_unit",
+    "patch_promotion_is_default",
+    "do_not_self_hash_manifests"
+  ]
+}

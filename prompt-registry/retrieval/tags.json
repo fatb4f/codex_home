@@ -1,0 +1,4 @@
+{
+  "workflow.git_flow.integration_worktree": ["git-flow", "integration", "bounded-batch"],
+  "workflow.contract_first": ["contract", "plan"]
+}

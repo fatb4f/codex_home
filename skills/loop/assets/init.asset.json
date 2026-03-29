@@ -1,0 +1,40 @@
+{
+  "name": "loop_init",
+  "version": "1.0",
+  "inputs": {
+    "repo_root": "path",
+    "worktree_base": "path",
+    "ledger_repo_root": "path",
+    "loop_instance_id": "string",
+    "iteration_id": "string",
+    "contract_root": "path"
+  },
+  "steps": [
+    "create integration worktree under worktree_base",
+    "create or bind a loop_ledger git worktree under ledger_repo_root",
+    "create $wt/{PLAN,IMPLEMENT,LOOP}",
+    "capture initial repo git state",
+    "record contract_root used for the run"
+  ],
+  "outputs": {
+    "wt": "$worktree_base/<loop_instance_id>.<iteration_id>",
+    "ledger_wt": "$ledger_repo_root.worktrees/<loop_instance_id>.<iteration_id>",
+    "plan_root": "$wt/PLAN",
+    "implement_root": "$wt/IMPLEMENT",
+    "loop_root": "$wt/LOOP",
+    "contract_root": "$contract_root",
+    "repo_git_state_init": "clean|dirty|unknown"
+  },
+  "gates": [
+    "wt_exists",
+    "ledger_wt_exists",
+    "plan_root_created",
+    "implement_root_created",
+    "loop_root_created"
+  ],
+  "rollback": [
+    "git worktree remove <wt> --force",
+    "git worktree remove <ledger_wt> --force",
+    "remove partial artifact roots under <wt> and <ledger_wt>"
+  ]
+}

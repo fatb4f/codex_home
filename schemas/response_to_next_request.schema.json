@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Response to next request link",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "source_response_ref",
+    "derived_request_ref",
+    "relationship"
+  ],
+  "properties": {
+    "kind": {
+      "const": "response_to_next_request.v1"
+    },
+    "source_response_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "derived_request_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relationship": {
+      "type": "string",
+      "enum": [
+        "followup",
+        "retry",
+        "promotion"
+      ]
+    }
+  }
+}

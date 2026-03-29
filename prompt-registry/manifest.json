@@ -1,0 +1,72 @@
+{
+  "version": "0.1.0",
+  "kind": "prompt_registry.v1",
+  "root": "prompt-registry/",
+  "authority": {
+    "registry_role": "retrieval_overlay",
+    "source_of_truth_root": "control/",
+    "notes": "Prompt-registry workflow records are retrieval overlays. Canonical workflow authority remains under control/."
+  },
+  "units": [
+    {
+      "id": "workflow.contract_first",
+      "kind": "workflow_unit",
+      "tags": ["contract-first", "planning", "validation"],
+      "applies_when": [
+        "task requires bounded contract-first planning",
+        "request must be validated before implementation"
+      ],
+      "requires": [
+        "snippet.planning",
+        "snippet.validation"
+      ],
+      "authority": {
+        "source_of_truth_root": "control/",
+        "source_of_truth_refs": [
+          "control/git-flow/git_flow.manifest.json",
+          "control/git-flow/git_flow.dag.json",
+          "control/git-flow/plan/README.md"
+        ],
+        "overlay_role": "retrieval_overlay"
+      },
+      "path": "workflows/contract-first.json"
+    },
+    {
+      "id": "workflow.git_flow.integration_worktree",
+      "kind": "workflow_unit",
+      "tags": ["git-flow", "integration", "bounded-batch"],
+      "applies_when": [
+        "task requires contract-gated promotion",
+        "work is executed in integration worktree"
+      ],
+      "requires": [
+        "snippet.validation",
+        "snippet.evidence",
+        "snippet.promotion"
+      ],
+      "authority": {
+        "source_of_truth_root": "control/git-flow/",
+        "source_of_truth_refs": [
+          "control/git-flow/git_flow.manifest.json",
+          "control/git-flow/git_flow.dag.json",
+          "control/git-flow/loop/README.md",
+          "control/git-flow/plan/README.md",
+          "control/git-flow/implement/README.md"
+        ],
+        "overlay_role": "retrieval_overlay"
+      },
+      "path": "workflows/git-flow.integration-worktree.json"
+    }
+  ],
+  "snippets": [
+    "planning",
+    "validation",
+    "evidence",
+    "promotion"
+  ],
+  "profiles": [
+    "default",
+    "review",
+    "patch"
+  ]
+}

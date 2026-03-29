@@ -1,0 +1,326 @@
+{
+  "kind": "json_tool.interface.v1",
+  "generated_at_utc": "2026-03-08T00:00:00Z",
+  "description": "Top-level operator surface for a contract-first JSON operations stack.",
+  "entry_modes": [
+    {
+      "id": "unstructured_ingest",
+      "input_kind": "external_ds",
+      "description": "Use when the source is prose or mixed artifacts and semantic extraction is required.",
+      "default_path": [
+        "extract",
+        "unify",
+        "validate",
+        "derive",
+        "check",
+        "authorize",
+        "render"
+      ]
+    },
+    {
+      "id": "structured_ingest",
+      "input_kind": "json_instance",
+      "description": "Use when the source is already JSON and can enter directly into contract validation or optional CUE unification.",
+      "default_path": [
+        "unify",
+        "validate",
+        "derive",
+        "check",
+        "authorize",
+        "render"
+      ]
+    }
+  ],
+  "shared_artifacts": [
+    {
+      "name": "candidate_envelope",
+      "fields": [
+        "contract_type",
+        "instance",
+        "evidence",
+        "uncertainties",
+        "inferred_fields"
+      ],
+      "produced_by": [
+        "extract"
+      ],
+      "consumed_by": [
+        "unify",
+        "validate"
+      ]
+    },
+    {
+      "name": "accepted_json",
+      "fields": [
+        "contract_type",
+        "instance"
+      ],
+      "produced_by": [
+        "unify",
+        "validate"
+      ],
+      "consumed_by": [
+        "derive",
+        "check",
+        "authorize",
+        "render"
+      ]
+    },
+    {
+      "name": "schema_validation_report",
+      "fields": [
+        "schema_ref",
+        "input_hash",
+        "valid",
+        "errors"
+      ],
+      "produced_by": [
+        "validate"
+      ],
+      "consumed_by": [
+        "derive",
+        "check",
+        "authorize"
+      ]
+    },
+    {
+      "name": "derived_artifacts",
+      "fields": [
+        "artifact_id",
+        "artifact_kind",
+        "artifact_path",
+        "input_hash"
+      ],
+      "produced_by": [
+        "derive"
+      ],
+      "consumed_by": [
+        "check",
+        "authorize",
+        "render"
+      ]
+    },
+    {
+      "name": "validation_facts",
+      "fields": [
+        "expr_id",
+        "input_hash",
+        "result",
+        "engine_version",
+        "evaluated_at"
+      ],
+      "produced_by": [
+        "check"
+      ],
+      "consumed_by": [
+        "authorize",
+        "render"
+      ]
+    },
+    {
+      "name": "policy_input",
+      "fields": [
+        "state",
+        "transition",
+        "actor",
+        "validation_facts"
+      ],
+      "produced_by": [
+        "authorize"
+      ],
+      "consumed_by": []
+    },
+    {
+      "name": "policy_decision",
+      "fields": [
+        "decision",
+        "reasons",
+        "policy_ref",
+        "evaluated_at"
+      ],
+      "produced_by": [
+        "authorize"
+      ],
+      "consumed_by": [
+        "render"
+      ]
+    },
+    {
+      "name": "rendered_outputs",
+      "fields": [
+        "output_id",
+        "output_kind",
+        "output_path"
+      ],
+      "produced_by": [
+        "render"
+      ],
+      "consumed_by": []
+    }
+  ],
+  "operators": [
+    {
+      "id": "extract",
+      "purpose": "Normalize unstructured external input into a candidate JSON envelope.",
+      "primary_engine": [
+        "LLM"
+      ],
+      "optional_supporting_layers": [
+        "CUE"
+      ],
+      "inputs": [
+        "external_ds",
+        "target_contract_ref"
+      ],
+      "outputs": [
+        "candidate_envelope"
+      ],
+      "preconditions": [
+        "Input is not already canonical JSON.",
+        "Target contract is known."
+      ],
+      "notes": [
+        "Extract does semantic lifting only.",
+        "It does not accept or publish canonical artifacts by itself."
+      ]
+    },
+    {
+      "id": "unify",
+      "purpose": "Constrain, complete, and merge candidates against contract-aligned constraints.",
+      "primary_engine": [
+        "CUE"
+      ],
+      "inputs": [
+        "candidate_envelope or json_instance",
+        "json_schema_contract or imported constraint set"
+      ],
+      "outputs": [
+        "accepted_json or incompleteness_report"
+      ],
+      "preconditions": [
+        "Target contract is aligned into the CUE constraint space when CUE is used."
+      ],
+      "notes": [
+        "Unify is the incomplete-state and interlingua boundary.",
+        "It does not replace downstream JSON Schema validation."
+      ]
+    },
+    {
+      "id": "validate",
+      "purpose": "Validate accepted JSON against canonical contracts.",
+      "primary_engine": [
+        "JSON Schema"
+      ],
+      "inputs": [
+        "accepted_json or candidate_envelope.instance",
+        "schema_ref"
+      ],
+      "outputs": [
+        "schema_validation_report",
+        "accepted_json"
+      ],
+      "preconditions": [
+        "Canonical schema exists."
+      ],
+      "notes": [
+        "Validate is the canonical artifact gate.",
+        "Failed validation stops derivation and authorization."
+      ]
+    },
+    {
+      "id": "derive",
+      "purpose": "Project, reshape, and assemble downstream JSON artifacts.",
+      "primary_engine": [
+        "jq"
+      ],
+      "optional_supporting_layers": [
+        "jaq"
+      ],
+      "inputs": [
+        "accepted_json"
+      ],
+      "outputs": [
+        "derived_artifacts"
+      ],
+      "preconditions": [
+        "Input JSON is valid."
+      ],
+      "notes": [
+        "Use jq as the default wrangling engine.",
+        "Use jaq only when Rust-side embedding is required."
+      ]
+    },
+    {
+      "id": "check",
+      "purpose": "Evaluate deterministic invariants and derive validation facts.",
+      "primary_engine": [
+        "CEL"
+      ],
+      "inputs": [
+        "accepted_json or derived_artifacts"
+      ],
+      "outputs": [
+        "validation_facts"
+      ],
+      "preconditions": [
+        "Objects are already shaped and structurally valid."
+      ],
+      "notes": [
+        "CEL is for predicates and computed selectors, not full document rewrites.",
+        "Outputs are auditable evaluation evidence, not formal proof."
+      ]
+    },
+    {
+      "id": "authorize",
+      "purpose": "Decide whether a requested transition or action is allowed.",
+      "primary_engine": [
+        "OPA/Rego"
+      ],
+      "inputs": [
+        "state",
+        "transition",
+        "actor",
+        "validation_facts"
+      ],
+      "outputs": [
+        "policy_input",
+        "policy_decision"
+      ],
+      "preconditions": [
+        "State is valid and validation facts are available when required."
+      ],
+      "notes": [
+        "OPA/Rego is the transition authorization layer.",
+        "Authorization should consume facts rather than duplicate low-level invariant logic."
+      ]
+    },
+    {
+      "id": "render",
+      "purpose": "Render human-facing or text payload outputs from accepted artifacts.",
+      "primary_engine": [
+        "MiniJinja"
+      ],
+      "inputs": [
+        "accepted_json",
+        "derived_artifacts",
+        "policy_decision"
+      ],
+      "outputs": [
+        "rendered_outputs"
+      ],
+      "preconditions": [
+        "Inputs are accepted and ready for presentation."
+      ],
+      "notes": [
+        "Rendering is presentation only.",
+        "Template logic must not become the contract or policy authority."
+      ]
+    }
+  ],
+  "non_goals": [
+    "use CEL as a bulk JSON transposition engine",
+    "use MiniJinja as a validation or policy layer",
+    "replace canonical JSON Schema contracts with runtime bindings",
+    "treat CUE as the only downstream contract publication format"
+  ]
+}

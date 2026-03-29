@@ -1,0 +1,68 @@
+{
+  "version": "1.0",
+  "skill": "implement",
+  "skill_version": "1.0",
+  "entry_requires": [
+    {
+      "name": "wt",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "objective",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "request_instance",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "contract_bindings",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "decision",
+      "type": "enum(APPROVED|REJECTED|NEEDS_INFO)",
+      "required": true
+    }
+  ],
+  "exit_produces": [
+    {
+      "name": "implement_packet",
+      "type": "path"
+    },
+    {
+      "name": "response_instance",
+      "type": "path"
+    },
+    {
+      "name": "response_manifest",
+      "type": "path"
+    },
+    {
+      "name": "response_validation",
+      "type": "path"
+    },
+    {
+      "name": "closeout_decision",
+      "type": "enum(APPROVED|REJECTED|NEEDS_INFO)"
+    }
+  ],
+  "capabilities": [
+    "execution_packet_generation",
+    "response_contract_emission",
+    "evidence_gated_execution"
+  ],
+  "side_effects": [
+    "writes_files_under_wt_implement",
+    "may_mutate_repo_when_mode_apply"
+  ],
+  "mutations": {
+    "repo": true,
+    "system": false,
+    "network": false
+  }
+}

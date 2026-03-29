@@ -1,0 +1,33 @@
+{
+  "name": "loop_terminate",
+  "version": "1.0",
+  "inputs": {
+    "wt": "path",
+    "ledger_wt": "path",
+    "verification_status": "PASS|FAIL|PENDING",
+    "request_instance": "path",
+    "response_manifest": "path",
+    "loop_instance_id": "string",
+    "iteration_id": "string"
+  },
+  "checks": [
+    "verification status must be PASS",
+    "request and response refs must still resolve",
+    "ledger bundle target path must exist before cleanup"
+  ],
+  "actions": [
+    "materialize review bundle and packet artifacts under $ledger_wt",
+    "emit closeout summary",
+    "prune temporary worktrees when requested"
+  ],
+  "outputs": {
+    "reports_archive_ref": "$ledger_wt/dist/<loop_instance_id>.<iteration_id>.review.zip",
+    "ledger_bundle_ref": "$ledger_wt/bundles/<project>/<loop_instance_id>/<iteration_id>",
+    "closeout_summary": "markdown section",
+    "tmp_wt_prune": "done|skipped|failed"
+  },
+  "rollback": [
+    "skip cleanup and retain worktrees for inspection",
+    "mark terminate result as failed"
+  ]
+}

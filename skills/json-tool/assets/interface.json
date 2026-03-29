@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "skill": "json-tool",
+  "skill_version": "0.1",
+  "entry_requires": [
+    {
+      "name": "input_kind",
+      "type": "enum(external_ds|json_instance)",
+      "required": true
+    },
+    {
+      "name": "target_contract_ref",
+      "type": "path_or_id",
+      "required": true
+    },
+    {
+      "name": "requested_operations",
+      "type": "list(enum(extract|unify|validate|derive|check|authorize|render))",
+      "required": true
+    }
+  ],
+  "exit_produces": [
+    {
+      "name": "accepted_json_ref",
+      "type": "path"
+    },
+    {
+      "name": "validation_report_ref",
+      "type": "path"
+    },
+    {
+      "name": "derived_artifact_refs",
+      "type": "path[]"
+    },
+    {
+      "name": "validation_facts_ref",
+      "type": "path"
+    },
+    {
+      "name": "policy_decision_ref",
+      "type": "path"
+    },
+    {
+      "name": "rendered_output_refs",
+      "type": "path[]"
+    }
+  ],
+  "capabilities": [
+    "contract_first_json_ops",
+    "json_schema_validation",
+    "jq_derivation",
+    "telemetry_normalization"
+  ],
+  "side_effects": [
+    "writes_json_artifacts",
+    "may_read_worker_packets_authority"
+  ],
+  "mutations": {
+    "repo": true,
+    "system": false,
+    "network": false
+  },
+  "operator_surface_ref": "assets/operator_surface.json"
+}

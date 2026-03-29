@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "plr": "https://_404.local/plan-review-loop#",
+    "id": "@id",
+    "type": "@type",
+    "RequestManifest": "plr:RequestManifest",
+    "ResponseManifest": "plr:ResponseManifest",
+    "AnchorRegistry": "plr:AnchorRegistry",
+    "request_id": "plr:requestId",
+    "response_id": "plr:responseId",
+    "scope_root": "plr:scopeRoot"
+  }
+}

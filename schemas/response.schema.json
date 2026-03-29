@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Response manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "@context",
+    "@id",
+    "@type",
+    "kind",
+    "response_id",
+    "request_ref",
+    "scope_root",
+    "canonical_artifact",
+    "derived_views",
+    "bundle"
+  ],
+  "properties": {
+    "@context": {
+      "type": "string"
+    },
+    "@id": {
+      "type": "string"
+    },
+    "@type": {
+      "const": "ResponseManifest"
+    },
+    "kind": {
+      "const": "response_manifest.v1"
+    },
+    "response_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_artifact": {
+      "type": "string",
+      "minLength": 1
+    },
+    "derived_views": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "bundle": {
+      "$ref": "archive_envelope.schema.json"
+    },
+    "verdict_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "findings_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "next_request_ref": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

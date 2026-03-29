@@ -1,0 +1,92 @@
+{
+  "version": "2.0",
+  "workflow": "plan",
+  "description": "Plan skill workflow for generating a bounded-batch plan packet plus git-flow contract artifacts under $wt/PLAN.",
+  "start": "P0_input",
+  "nodes": [
+    {
+      "id": "P0_input",
+      "phase": "PLAN",
+      "action": "bind_plan_inputs",
+      "outputs": [
+        "objective",
+        "wt",
+        "contract_root",
+        "bounded_batch_id",
+        "target_layer",
+        "target_branch"
+      ],
+      "next": [
+        "P1_generate"
+      ]
+    },
+    {
+      "id": "P1_generate",
+      "phase": "PLAN",
+      "action": "generate_plan_packet",
+      "uses_script": "scripts/generate_plan_packet.py",
+      "artifact_root": "$wt/PLAN",
+      "outputs": [
+        "plan_packet",
+        "plan_packet_meta"
+      ],
+      "next": [
+        "P2_emit_contract_outputs"
+      ]
+    },
+    {
+      "id": "P2_emit_contract_outputs",
+      "phase": "PLAN",
+      "action": "emit_request_and_git_flow_outputs",
+      "outputs": [
+        "request_instance",
+        "request_validation",
+        "contract_bindings",
+        "batch_manifest",
+        "integration_gate_plan",
+        "promotion_plan"
+      ],
+      "next": [
+        "P3_validate"
+      ]
+    },
+    {
+      "id": "P3_validate",
+      "phase": "PLAN",
+      "action": "validate_plan_packet_and_contract_outputs",
+      "uses_script": "scripts/validate_plan_packet.py",
+      "outputs": [
+        "plan_validation"
+      ],
+      "guards": {
+        "valid": {
+          "when": "plan_validation == OK",
+          "goto": "P4_exit"
+        },
+        "invalid": {
+          "when": "plan_validation != OK",
+          "goto": "P1_generate"
+        }
+      }
+    },
+    {
+      "id": "P4_exit",
+      "phase": "PLAN",
+      "action": "emit_handoff_ready_packet",
+      "outputs": [
+        "decision",
+        "bounded_batch",
+        "gate_plan",
+        "promotion_plan_ref"
+      ],
+      "next": []
+    }
+  ],
+  "invariants": [
+    "plan_artifacts_under_wt_plan",
+    "request_contract_validation_required",
+    "bounded_batch_manifest_required",
+    "promotion_plan_required",
+    "decision_must_be_explicit"
+  ]
+}

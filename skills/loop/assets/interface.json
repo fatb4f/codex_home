@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "skill": "loop",
+  "skill_version": "1.0",
+  "entry_requires": [
+    {
+      "name": "objective",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "repo_root",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "worktree_base",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "ledger_repo_root",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "loop_instance_id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "iteration_id",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "contract_root",
+      "type": "path",
+      "required": true
+    }
+  ],
+  "exit_produces": [
+    {
+      "name": "wt",
+      "type": "path"
+    },
+    {
+      "name": "ledger_wt",
+      "type": "path"
+    },
+    {
+      "name": "request_instance",
+      "type": "path"
+    },
+    {
+      "name": "response_instance",
+      "type": "path"
+    },
+    {
+      "name": "verification_status",
+      "type": "enum(PASS|FAIL|PENDING)"
+    },
+    {
+      "name": "reports_archive_ref",
+      "type": "path"
+    }
+  ],
+  "capabilities": [
+    "phase_routing",
+    "transition_gating",
+    "contract_enforcement"
+  ],
+  "side_effects": [
+    "creates_and_removes_integration_and_ledger_worktrees",
+    "delegates_artifact_generation_to_child_skills"
+  ],
+  "mutations": {
+    "repo": true,
+    "system": false,
+    "network": false
+  }
+}

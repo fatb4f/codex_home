@@ -1,0 +1,5 @@
+{
+  "name": "patch",
+  "workflow_preferences": ["workflow.git_flow.integration_worktree"],
+  "snippet_order": ["planning", "promotion", "evidence"]
+}

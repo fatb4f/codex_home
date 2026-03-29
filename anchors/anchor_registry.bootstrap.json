@@ -1,0 +1,23 @@
+{
+  "@context": "context/plan-review-loop.context.jsonld",
+  "@id": "repo:anchors/bootstrap",
+  "@type": "AnchorRegistry",
+  "kind": "anchor_registry.v1",
+  "anchors": [
+    {
+      "anchor_id": "anchor:bootstrap_context",
+      "anchor_type": "context",
+      "artifact_ref": "context/plan-review-loop.context.jsonld"
+    },
+    {
+      "anchor_id": "anchor:bootstrap_contract",
+      "anchor_type": "contract",
+      "artifact_ref": "plan.request_response_contract.v1.json"
+    },
+    {
+      "anchor_id": "anchor:git_flow_manifest",
+      "anchor_type": "git_flow_manifest",
+      "artifact_ref": "control/git-flow/git_flow.manifest.json"
+    }
+  ]
+}

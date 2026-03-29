@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {"type": "string"},
+    "kind": {"type": "string"},
+    "root": {"type": "string"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "registry_role": {
+          "type": "string",
+          "enum": ["retrieval_overlay", "prompt_overlay"]
+        },
+        "source_of_truth_root": {"type": "string"},
+        "notes": {"type": "string"}
+      },
+      "required": ["registry_role", "source_of_truth_root"]
+    },
+    "units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "kind": {"type": "string"},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "applies_when": {"type": "array", "items": {"type": "string"}},
+          "requires": {"type": "array", "items": {"type": "string"}},
+          "path": {"type": "string"},
+          "authority": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "source_of_truth_root": {"type": "string"},
+              "source_of_truth_refs": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "overlay_role": {
+                "type": "string",
+                "enum": ["retrieval_overlay", "prompt_overlay"]
+              }
+            },
+            "required": [
+              "source_of_truth_root",
+              "source_of_truth_refs",
+              "overlay_role"
+            ]
+          }
+        },
+        "required": ["id", "kind", "path"]
+      }
+    },
+    "snippets": {"type": "array", "items": {"type": "string"}},
+    "profiles": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["version", "kind", "root", "units"]
+}

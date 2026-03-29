@@ -1,0 +1,259 @@
+{
+  "kind": "json_tool.telemetry_pipeline.v1",
+  "generated_at_utc": "2026-03-08T00:00:00Z",
+  "description": "Deterministic normalization and pattern-derivation pipeline for JSONL telemetry, git history, and artifact metadata.",
+  "entrypoints": [
+    {
+      "id": "jsonl_ingest",
+      "sources": [
+        "codex_cli_jsonl",
+        "artifact_jsonl",
+        "runtime_jsonl"
+      ],
+      "starts_at": "envelope_raw_event"
+    },
+    {
+      "id": "git_ingest",
+      "sources": [
+        "git_log"
+      ],
+      "starts_at": "normalize_git_event"
+    },
+    {
+      "id": "artifact_ingest",
+      "sources": [
+        "artifact_metadata"
+      ],
+      "starts_at": "normalize_artifact_event"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "envelope_raw_event",
+      "operator": "jq_normalize",
+      "reads": [
+        "jsonl_source_line"
+      ],
+      "writes": [
+        "raw_event.envelope.v1"
+      ],
+      "exit_condition": "raw_event.envelope.v1 emitted",
+      "notes": [
+        "Use a CloudEvents-inspired envelope with local provenance extensions.",
+        "This step preserves raw identity and source before domain normalization."
+      ]
+    },
+    {
+      "id": "normalize_telemetry_event",
+      "operator": "jq_normalize",
+      "reads": [
+        "raw_event.envelope.v1"
+      ],
+      "writes": [
+        "telemetry.event.v1"
+      ],
+      "exit_condition": "telemetry.event.v1 emitted"
+    },
+    {
+      "id": "normalize_git_event",
+      "operator": "jq_normalize",
+      "reads": [
+        "git_log or raw_event.envelope.v1"
+      ],
+      "writes": [
+        "git.event.v1"
+      ],
+      "exit_condition": "git.event.v1 emitted"
+    },
+    {
+      "id": "normalize_artifact_event",
+      "operator": "jq_normalize",
+      "reads": [
+        "artifact_metadata or raw_event.envelope.v1"
+      ],
+      "writes": [
+        "artifact.event.v1"
+      ],
+      "exit_condition": "artifact.event.v1 emitted"
+    },
+    {
+      "id": "validate_events",
+      "operator": "json_schema_validate",
+      "reads": [
+        "telemetry.event.v1 or git.event.v1 or artifact.event.v1"
+      ],
+      "writes": [
+        "event_validation_report"
+      ],
+      "exit_condition": "event_validation_report.valid is true"
+    },
+    {
+      "id": "group_session_traces",
+      "operator": "jq_aggregate",
+      "reads": [
+        "validated normalized events"
+      ],
+      "writes": [
+        "session.trace.v1"
+      ],
+      "exit_condition": "session.trace.v1 emitted",
+      "notes": [
+        "Grouping keys and ordering rules must be versioned and deterministic.",
+        "Canonical keys for the pilot are session_id, run_id, request_id, sequence_no, and ts_observed as pinned in agent_spawn_worker.mapping.v1.json."
+      ]
+    },
+    {
+      "id": "derive_pattern_signals",
+      "operator": "jq_derive",
+      "reads": [
+        "session.trace.v1"
+      ],
+      "writes": [
+        "pattern.signal.v1"
+      ],
+      "exit_condition": "pattern.signal.v1 emitted"
+    },
+    {
+      "id": "compute_validation_facts",
+      "operator": "cel_eval",
+      "reads": [
+        "session.trace.v1 or pattern.signal.v1"
+      ],
+      "writes": [
+        "validation_facts"
+      ],
+      "exit_condition": "validation_facts emitted",
+      "notes": [
+        "Use CEL for deterministic local facts such as retry_count == 0 or artifact_count > 3."
+      ]
+    },
+    {
+      "id": "gate_pattern_promotion",
+      "operator": "opa_authorize",
+      "reads": [
+        "pattern.signal.v1",
+        "validation_facts",
+        "review_context"
+      ],
+      "writes": [
+        "pattern.review.v1 or policy_decision"
+      ],
+      "exit_condition": "promotion decision recorded",
+      "notes": [
+        "Use OPA only for promotion or registration gates, not raw exploratory analysis."
+      ]
+    },
+    {
+      "id": "promote_pattern_set",
+      "operator": "jq_assemble",
+      "reads": [
+        "approved pattern.review.v1"
+      ],
+      "writes": [
+        "pattern.set.v1"
+      ],
+      "exit_condition": "pattern.set.v1 emitted"
+    },
+    {
+      "id": "render_reports",
+      "operator": "minijinja_render",
+      "reads": [
+        "session.trace.v1",
+        "pattern.signal.v1",
+        "pattern.set.v1"
+      ],
+      "writes": [
+        "markdown_reports",
+        "review_packs"
+      ],
+      "exit_condition": "rendered outputs emitted"
+    }
+  ],
+  "edges": [
+    {
+      "from": "envelope_raw_event",
+      "to": "normalize_telemetry_event",
+      "condition": "source_kind is telemetry-like jsonl"
+    },
+    {
+      "from": "normalize_telemetry_event",
+      "to": "validate_events",
+      "condition": "telemetry.event.v1 exists"
+    },
+    {
+      "from": "normalize_git_event",
+      "to": "validate_events",
+      "condition": "git.event.v1 exists"
+    },
+    {
+      "from": "normalize_artifact_event",
+      "to": "validate_events",
+      "condition": "artifact.event.v1 exists"
+    },
+    {
+      "from": "validate_events",
+      "to": "group_session_traces",
+      "condition": "validated normalized events available"
+    },
+    {
+      "from": "group_session_traces",
+      "to": "derive_pattern_signals",
+      "condition": "trace grouping completed"
+    },
+    {
+      "from": "derive_pattern_signals",
+      "to": "compute_validation_facts",
+      "condition": "validation facts required for signal evaluation"
+    },
+    {
+      "from": "derive_pattern_signals",
+      "to": "render_reports",
+      "condition": "exploratory rendering only and no promotion path required"
+    },
+    {
+      "from": "compute_validation_facts",
+      "to": "gate_pattern_promotion",
+      "condition": "promotion or registration requested"
+    },
+    {
+      "from": "gate_pattern_promotion",
+      "to": "promote_pattern_set",
+      "condition": "promotion approved"
+    },
+    {
+      "from": "promote_pattern_set",
+      "to": "render_reports",
+      "condition": "promoted pattern set emitted"
+    }
+  ],
+  "terminal_states": [
+    {
+      "id": "invalid_event",
+      "reached_when": "event validation fails"
+    },
+    {
+      "id": "signal_only",
+      "reached_when": "pattern.signal.v1 emitted without promotion"
+    },
+    {
+      "id": "promotion_denied",
+      "reached_when": "gate_pattern_promotion denies promotion"
+    },
+    {
+      "id": "pattern_set_promoted",
+      "reached_when": "pattern.set.v1 emitted"
+    },
+    {
+      "id": "report_rendered",
+      "reached_when": "markdown_reports or review_packs emitted"
+    }
+  ],
+  "ordering_rules": [
+    "Normalize into canonical event contracts before cross-source grouping.",
+    "Validate canonical events before trace aggregation.",
+    "Derive pattern signals from traces, not directly from raw event streams.",
+    "Use CEL for local facts after normalization, not for raw event rewriting.",
+    "Use OPA/Rego only for promotion or registration gates, not for raw analysis.",
+    "Render reports last."
+  ]
+}

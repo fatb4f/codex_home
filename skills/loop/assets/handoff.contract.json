@@ -1,0 +1,151 @@
+{
+  "version": "2.0",
+  "id": "loop-handoff-contract-v2",
+  "description": "Canonical handoff contract between PLAN and IMPLEMENT phases in the loop meta-skill.",
+  "enums": {
+    "phase": [
+      "INIT",
+      "PLAN",
+      "IMPLEMENT",
+      "VERIFY",
+      "TERMINATE"
+    ],
+    "decision": [
+      "APPROVED",
+      "REJECTED",
+      "NEEDS_INFO",
+      "IN_PROGRESS"
+    ],
+    "gate_result": [
+      "PASS",
+      "FAIL",
+      "PENDING"
+    ]
+  },
+  "required_fields": [
+    "wt",
+    "ledger_wt",
+    "contract_root",
+    "contract_bindings",
+    "goal",
+    "problem_set",
+    "scope",
+    "assets_required",
+    "assets_impacted",
+    "dependency_matrix",
+    "gate_plan",
+    "promotion_plan",
+    "rollback_plan",
+    "decision",
+    "request_instance",
+    "request_validation",
+    "batch_manifest",
+    "integration_gate_plan"
+  ],
+  "field_contracts": {
+    "wt": {
+      "type": "string",
+      "min_length": 1
+    },
+    "ledger_wt": {
+      "type": "string",
+      "min_length": 1
+    },
+    "contract_root": {
+      "type": "string",
+      "min_length": 1
+    },
+    "contract_bindings": {
+      "type": "string",
+      "min_length": 1
+    },
+    "goal": {
+      "type": "string",
+      "min_length": 1
+    },
+    "problem_set": {
+      "type": "string",
+      "min_length": 1
+    },
+    "scope": {
+      "type": "markdown_section"
+    },
+    "assets_required": {
+      "type": "markdown_table_or_list"
+    },
+    "assets_impacted": {
+      "type": "markdown_table_or_list"
+    },
+    "dependency_matrix": {
+      "type": "markdown_table"
+    },
+    "gate_plan": {
+      "type": "markdown_section"
+    },
+    "promotion_plan": {
+      "type": "markdown_section"
+    },
+    "rollback_plan": {
+      "type": "markdown_section"
+    },
+    "decision": {
+      "type": "enum",
+      "values_ref": "enums.decision"
+    },
+    "request_instance": {
+      "type": "string",
+      "min_length": 1
+    },
+    "request_validation": {
+      "type": "string",
+      "min_length": 1
+    },
+    "batch_manifest": {
+      "type": "string",
+      "min_length": 1
+    },
+    "integration_gate_plan": {
+      "type": "string",
+      "min_length": 1
+    }
+  },
+  "boundary_contracts": {
+    "plan_to_implement": {
+      "from": "PLAN",
+      "to": "IMPLEMENT",
+      "requires": [
+        "decision == APPROVED",
+        "request_instance",
+        "request_validation",
+        "contract_bindings",
+        "batch_manifest",
+        "integration_gate_plan"
+      ]
+    },
+    "implement_to_verify": {
+      "from": "IMPLEMENT",
+      "to": "VERIFY",
+      "requires": [
+        "response_instance",
+        "response_manifest",
+        "response_validation"
+      ]
+    },
+    "verify_to_terminate": {
+      "from": "VERIFY",
+      "to": "TERMINATE",
+      "requires": [
+        "transition_gate == PASS",
+        "request_response_linkage_valid",
+        "manifest_self_reference == false"
+      ]
+    }
+  },
+  "reject_rules": [
+    "missing_required_field",
+    "decision_not_approved_for_implement",
+    "missing_contract_bindings",
+    "response_contract_outputs_missing",
+    "manifest_self_reference_detected"
+  ]
+}

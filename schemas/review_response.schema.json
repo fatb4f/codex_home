@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Review response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "review_request_id",
+    "reviewed_head",
+    "review_scope",
+    "verdict",
+    "findings",
+    "next_patch_set"
+  ],
+  "properties": {
+    "kind": {
+      "const": "review_response.v1"
+    },
+    "review_request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewed_head": {
+      "type": "object"
+    },
+    "review_scope": {
+      "type": "object"
+    },
+    "verdict": {
+      "type": "object"
+    },
+    "findings": {
+      "type": "array"
+    },
+    "next_patch_set": {
+      "type": "array"
+    }
+  }
+}

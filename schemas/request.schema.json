@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Request manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "@context",
+    "@id",
+    "@type",
+    "kind",
+    "request_id",
+    "scope_root",
+    "input_mode",
+    "reviewed_head",
+    "anchors",
+    "submitted_artifacts",
+    "bundle",
+    "expected_response"
+  ],
+  "properties": {
+    "@context": {
+      "type": "string"
+    },
+    "@id": {
+      "type": "string"
+    },
+    "@type": {
+      "const": "RequestManifest"
+    },
+    "kind": {
+      "const": "request_manifest.v1"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scope_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input_mode": {
+      "type": "string",
+      "enum": [
+        "head",
+        "head_plus_working_tree"
+      ]
+    },
+    "reviewed_head": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "short",
+        "date",
+        "subject"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "short": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{7,12}$"
+        },
+        "date": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "anchors": {
+      "type": "object"
+    },
+    "submitted_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "deliverable_sets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "bounded_batch_deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "contract_deliverables",
+        "bounded_batch_deliverables"
+      ]
+    },
+    "bundle": {
+      "$ref": "archive_envelope.schema.json"
+    },
+    "expected_response": {
+      "type": "object",
+      "properties": {
+        "one_output_per_input": {
+          "type": "boolean"
+        },
+        "canonical_response": {
+          "type": "string",
+          "minLength": 1
+        },
+        "derived_views": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "bounded_batch_deliverables_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "one_output_per_input",
+        "canonical_response",
+        "derived_views"
+      ]
+    },
+    "working_tree": {
+      "type": "object"
+    }
+  }
+}

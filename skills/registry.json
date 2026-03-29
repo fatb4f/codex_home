@@ -1,0 +1,557 @@
+{
+  "kind": "skills.registry.v1",
+  "generated_at_utc": "2026-03-10T05:25:57Z",
+  "skills_root": "/home/_404/src/dotfiles/config/codex/skills",
+  "skills": [
+    {
+      "skill_id": "daily-reports",
+      "directory": "daily-reports",
+      "skill_md": "daily-reports/SKILL.md",
+      "version": "0.1",
+      "description": "Use this skill to derive canonical daily progress/stale report JSON from backlog state and required session-context artifacts, then render markdown outputs through MiniJinja.",
+      "compatibility": "Subordinate to json-tool for canonical JSON derivation and validation. Uses backlog as report authority, session-context as required operational input, and MiniJinja only for textual projections.",
+      "allowed_tools": "",
+      "workflow_ref": "daily-reports/assets/workflow.json",
+      "interface_ref": "daily-reports/assets/interface.json",
+      "entry_node": "DR0_load_request",
+      "exit_nodes": [
+        "DR4_emit_result"
+      ],
+      "inputs": [
+        {
+          "name": "request_ref",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "backlog_ref",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "session_context_ref",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "capture_evidence_ref",
+          "type": "path_or_null",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "progress_report_ref",
+          "type": "path_or_null"
+        },
+        {
+          "name": "stale_report_ref",
+          "type": "path_or_null"
+        },
+        {
+          "name": "context_consumption_report_ref",
+          "type": "path"
+        },
+        {
+          "name": "rendered_markdown_refs",
+          "type": "path[]"
+        },
+        {
+          "name": "result_ref",
+          "type": "path"
+        }
+      ],
+      "capabilities": [
+        "daily_progress_reporting",
+        "daily_stale_reporting",
+        "session_context_binding",
+        "minijinja_markdown_rendering"
+      ],
+      "side_effects": [
+        "writes_report_json",
+        "writes_markdown_reports"
+      ],
+      "mutations": {
+        "repo": true,
+        "system": false,
+        "network": false
+      }
+    },
+    {
+      "skill_id": "implement",
+      "directory": "implement",
+      "skill_md": "implement/SKILL.md",
+      "version": "0.3",
+      "description": "Use this skill to execute approved plans through gated delivery: map parent/sub-issues, enforce evidence_required, run dry-run first, and apply only when gates pass.",
+      "compatibility": "Requires an approved plan or equivalent execution contract. Uses dry-run by default; apply requires explicit approval and passing evidence gate.",
+      "allowed_tools": "Bash(scripts/validate_implement_packet.py:*) Bash(scripts/generate_implement_packet.py:*) Bash(gh:*) Read",
+      "workflow_ref": "implement/assets/workflow.json",
+      "interface_ref": "implement/assets/interface.json",
+      "entry_node": "I0_input",
+      "exit_nodes": [
+        "I3_execute"
+      ],
+      "inputs": [
+        {
+          "name": "wt",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "objective",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "parent_issue",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "deliverables",
+          "type": "table",
+          "required": true
+        },
+        {
+          "name": "decision",
+          "type": "enum(APPROVED|REJECTED|NEEDS_INFO)",
+          "required": true
+        },
+        {
+          "name": "evidence_required",
+          "type": "table_or_list",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "implement_packet",
+          "type": "path"
+        },
+        {
+          "name": "implement_packet_meta",
+          "type": "path"
+        },
+        {
+          "name": "execution_artifacts",
+          "type": "path[]"
+        },
+        {
+          "name": "gate_outcomes",
+          "type": "record"
+        },
+        {
+          "name": "closeout_decision",
+          "type": "enum(APPROVED|REJECTED|NEEDS_INFO)"
+        }
+      ],
+      "capabilities": [
+        "execution_packet_generation",
+        "execution_packet_validation",
+        "evidence_gated_execution"
+      ],
+      "side_effects": [
+        "writes_files_under_wt_implement",
+        "may_mutate_repo_when_mode_apply"
+      ],
+      "mutations": {
+        "repo": true,
+        "system": false,
+        "network": true
+      }
+    },
+    {
+      "skill_id": "json-tool",
+      "directory": "json-tool",
+      "skill_md": "json-tool/SKILL.md",
+      "version": "0.1",
+      "description": "Use this skill for contract-first JSON operations: normalize or validate JSON artifacts, derive downstream JSON with jq/jaq, evaluate invariant facts, prepare policy inputs, and render human-facing outputs from schema-bound contracts.",
+      "compatibility": "Best for JSON-first workflows with canonical JSON Schema contracts. Uses worker_packets as the packet-contract authority and treats CUE/CEL/OPA/MiniJinja as layered support, not co-equal authorities.",
+      "allowed_tools": "",
+      "workflow_ref": "json-tool/assets/workflow.json",
+      "interface_ref": "json-tool/assets/interface.json",
+      "entry_node": "J0_route",
+      "exit_nodes": [
+        "J8_exit"
+      ],
+      "inputs": [
+        {
+          "name": "input_kind",
+          "type": "enum(external_ds|json_instance)",
+          "required": true
+        },
+        {
+          "name": "target_contract_ref",
+          "type": "path_or_id",
+          "required": true
+        },
+        {
+          "name": "requested_operations",
+          "type": "list(enum(extract|unify|validate|derive|check|authorize|render))",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "accepted_json_ref",
+          "type": "path"
+        },
+        {
+          "name": "validation_report_ref",
+          "type": "path"
+        },
+        {
+          "name": "derived_artifact_refs",
+          "type": "path[]"
+        },
+        {
+          "name": "validation_facts_ref",
+          "type": "path"
+        },
+        {
+          "name": "policy_decision_ref",
+          "type": "path"
+        },
+        {
+          "name": "rendered_output_refs",
+          "type": "path[]"
+        }
+      ],
+      "capabilities": [
+        "contract_first_json_ops",
+        "json_schema_validation",
+        "jq_derivation",
+        "telemetry_normalization"
+      ],
+      "side_effects": [
+        "writes_json_artifacts",
+        "may_read_worker_packets_authority"
+      ],
+      "mutations": {
+        "repo": true,
+        "system": false,
+        "network": false
+      }
+    },
+    {
+      "skill_id": "loop",
+      "directory": "loop",
+      "skill_md": "loop/SKILL.md",
+      "version": "0.4",
+      "description": "Use this meta-skill to orchestrate lifecycle routing across plan, implement, and future refactor phases with explicit transitions, evidence gates, and rollback-aware handoffs.",
+      "compatibility": "Requires child skills: sweep, plan, and implement. No execution before decision APPROVED.",
+      "allowed_tools": "Read Bash(gh:*) Bash(git:*) Bash(scripts/validate_loop_packet.py:*) Bash(scripts/validate_handoff.py:*)",
+      "workflow_ref": "loop/assets/workflow.json",
+      "interface_ref": "loop/assets/interface.json",
+      "entry_node": "N0_initialize",
+      "exit_nodes": [
+        "N8_terminate"
+      ],
+      "inputs": [
+        {
+          "name": "objective",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "repo_root",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "ledger_repo_root",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "worktree_base",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "loop_instance_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "iteration_id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "parent_issue",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "workflow_generated",
+          "type": "path"
+        },
+        {
+          "name": "wt",
+          "type": "path"
+        },
+        {
+          "name": "ledger_wt",
+          "type": "path"
+        },
+        {
+          "name": "plan_packet",
+          "type": "path"
+        },
+        {
+          "name": "implement_packet",
+          "type": "path"
+        },
+        {
+          "name": "confirmfix_problem_set",
+          "type": "enum(PASS|FAIL|PENDING)"
+        },
+        {
+          "name": "post_liveliness",
+          "type": "enum(PASS|FAIL|PENDING)"
+        },
+        {
+          "name": "reports_archive_ref",
+          "type": "path"
+        },
+        {
+          "name": "tmp_wt_prune",
+          "type": "enum(done|skipped|failed)"
+        },
+        {
+          "name": "closeout_summary",
+          "type": "markdown.section"
+        }
+      ],
+      "capabilities": [
+        "phase_routing",
+        "transition_gating",
+        "contract_enforcement"
+      ],
+      "side_effects": [
+        "creates_and_removes_integration_and_ledger_worktrees",
+        "delegates_artifact_generation_to_child_skills"
+      ],
+      "mutations": {
+        "repo": true,
+        "system": false,
+        "network": true
+      }
+    },
+    {
+      "skill_id": "plan",
+      "directory": "plan",
+      "skill_md": "plan/SKILL.md",
+      "version": "1.5",
+      "description": "Use this skill when the user asks for plan-first execution. Produce a structured analysis and execution plan before any code/runtime changes, with explicit approval gates and rollback.",
+      "compatibility": "Requires repository and service inspection commands; no runtime mutation until explicit user approval.",
+      "allowed_tools": "Bash(scripts/generate_plan_packet.py:*) Bash(scripts/validate_plan_packet.py:*) Bash(gh:*) Read",
+      "workflow_ref": "plan/assets/workflow.json",
+      "interface_ref": "plan/assets/interface.json",
+      "entry_node": "P0_input",
+      "exit_nodes": [
+        "P3_exit"
+      ],
+      "inputs": [
+        {
+          "name": "objective",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "failure_signatures",
+          "type": "string[]",
+          "required": false
+        },
+        {
+          "name": "wt",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "pre_sweep_ref",
+          "type": "path",
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": "plan_packet",
+          "type": "path"
+        },
+        {
+          "name": "plan_packet_meta",
+          "type": "path"
+        },
+        {
+          "name": "problem_set",
+          "type": "markdown.section"
+        },
+        {
+          "name": "reproduce_problem_set",
+          "type": "string"
+        },
+        {
+          "name": "matrix",
+          "type": "markdown.table"
+        },
+        {
+          "name": "decision",
+          "type": "enum(APPROVED|REJECTED|NEEDS_INFO)"
+        },
+        {
+          "name": "evidence_required",
+          "type": "markdown.table_or_list"
+        }
+      ],
+      "capabilities": [
+        "packet_generation",
+        "packet_validation",
+        "plan_first_gating"
+      ],
+      "side_effects": [
+        "writes_files_under_wt_plan"
+      ],
+      "mutations": {
+        "repo": false,
+        "system": false,
+        "network": false
+      }
+    },
+    {
+      "skill_id": "specify-proposal",
+      "directory": "specify-proposal",
+      "skill_md": "specify-proposal/SKILL.md",
+      "version": "unknown",
+      "description": "Use this meta-skill to turn a proposal/problem statement into gated proposal artifacts for proposal_register, leveraging json-tool for any JSON normalization, validation, derivation, or rendering work.",
+      "compatibility": "Meta-skill only. Keeps proposal_register as the promotion gate and treats json-tool as the authoritative JSON actuator whenever the workflow crosses a JSON boundary.",
+      "allowed_tools": "",
+      "workflow_ref": "",
+      "interface_ref": "",
+      "entry_node": "",
+      "exit_nodes": [],
+      "inputs": [],
+      "outputs": [],
+      "capabilities": [],
+      "side_effects": [],
+      "mutations": {}
+    },
+    {
+      "skill_id": "sweep",
+      "directory": "sweep",
+      "skill_md": "sweep/SKILL.md",
+      "version": "0.2",
+      "description": "Use this skill to capture deterministic runtime baseline artifacts and liveliness state before planning and after implementation, then produce a normalized pre/post sweep diff.",
+      "compatibility": "Requires systemd user session, git, and local shell access. Writes artifacts under $wt/SWEEP/{preflight,postflight}.",
+      "allowed_tools": "Read Bash(scripts/baseline_sweep.sh:*) Bash(scripts/diff_sweeps.py:*) Bash(git:*) Bash(systemctl:*) Bash(journalctl:*)",
+      "workflow_ref": "sweep/assets/workflow.json",
+      "interface_ref": "sweep/assets/interface.json",
+      "entry_node": "S0_input",
+      "exit_nodes": [
+        "S3_exit"
+      ],
+      "inputs": [
+        {
+          "name": "wt",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "repo_root",
+          "type": "path",
+          "required": true
+        },
+        {
+          "name": "phase",
+          "type": "enum(preflight|postflight)",
+          "required": true
+        },
+        {
+          "name": "pre_sweep_ref",
+          "type": "path",
+          "required": false
+        }
+      ],
+      "outputs": [
+        {
+          "name": "sweep_ref",
+          "type": "path"
+        },
+        {
+          "name": "sweep_fingerprint",
+          "type": "string"
+        },
+        {
+          "name": "dotfiles_sync",
+          "type": "enum(in_sync|ahead|behind|diverged|unknown)"
+        },
+        {
+          "name": "repo_git_state",
+          "type": "enum(clean|dirty|unknown)"
+        },
+        {
+          "name": "wt_git_state",
+          "type": "enum(clean|dirty|unknown)"
+        },
+        {
+          "name": "wt_location_gate",
+          "type": "enum(PASS|FAIL|PENDING)"
+        },
+        {
+          "name": "sweep_diff_report_ref",
+          "type": "path"
+        },
+        {
+          "name": "unexpected_drift_count",
+          "type": "int"
+        },
+        {
+          "name": "drift_classification",
+          "type": "enum(expected_only|unexpected_present|unknown)"
+        },
+        {
+          "name": "post_liveliness",
+          "type": "enum(PASS|FAIL|PENDING)"
+        },
+        {
+          "name": "sweep_gate",
+          "type": "enum(PASS|FAIL|PENDING)"
+        }
+      ],
+      "capabilities": [
+        "runtime_baseline_capture",
+        "pre_post_diff",
+        "liveliness_detection"
+      ],
+      "side_effects": [
+        "writes_files_under_wt_sweep"
+      ],
+      "mutations": {
+        "repo": false,
+        "system": false,
+        "network": false
+      }
+    },
+    {
+      "skill_id": "tooling-policy",
+      "directory": "tooling-policy",
+      "skill_md": "tooling-policy/SKILL.md",
+      "version": "unknown",
+      "description": "Use this skill when deciding tool authority, promotion boundaries, or which official tool/skill must own a workflow step. Keeps proposal_register as the promotion gate, specify-proposal as proposal ingress, json-tool as the authoritative JSON actuator, and worker_packets as runtime packet authority.",
+      "compatibility": "Policy/meta-skill only. Use to resolve authority drift, ad hoc tool usage, promotion-path ambiguity, or conflicts between discussions, proposal packets, and canonical repos.",
+      "allowed_tools": "",
+      "workflow_ref": "",
+      "interface_ref": "",
+      "entry_node": "",
+      "exit_nodes": [],
+      "inputs": [],
+      "outputs": [],
+      "capabilities": [],
+      "side_effects": [],
+      "mutations": {}
+    }
+  ]
+}

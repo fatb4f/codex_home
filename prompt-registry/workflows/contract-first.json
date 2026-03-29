@@ -1,0 +1,11 @@
+{
+  "id": "workflow.contract_first",
+  "kind": "workflow",
+  "description": "Contract-first planning and validation",
+  "steps": [
+    "plan_packet_generation",
+    "request_artifact_emission",
+    "contract_validation",
+    "decision_gate"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "manifest": "manifest.json",
+  "workflows": ["workflow.git_flow.integration_worktree", "workflow.contract_first"],
+  "snippets": ["planning", "validation", "evidence", "promotion"],
+  "profiles": ["default", "review", "patch"]
+}

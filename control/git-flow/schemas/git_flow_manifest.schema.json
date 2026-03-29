@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Git flow manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "authority",
+    "layers",
+    "batch_policy",
+    "promotion",
+    "ci_gates",
+    "evidence"
+  ],
+  "properties": {
+    "kind": {
+      "const": "git_flow_manifest.v1"
+    },
+    "authority": {
+      "type": "object"
+    },
+    "layers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "batch_policy": {
+      "type": "object"
+    },
+    "promotion": {
+      "type": "object"
+    },
+    "ci_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence": {
+      "type": "object"
+    }
+  }
+}

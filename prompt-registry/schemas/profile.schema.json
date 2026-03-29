@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "workflow_preferences": {"type": "array", "items": {"type": "string"}},
+    "snippet_order": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["name"]
+}

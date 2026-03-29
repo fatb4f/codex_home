@@ -1,0 +1,85 @@
+{
+  "version": "2.0",
+  "skill": "plan",
+  "skill_version": "2.0",
+  "entry_requires": [
+    {
+      "name": "objective",
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "wt",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "contract_root",
+      "type": "path",
+      "required": true
+    },
+    {
+      "name": "bounded_batch_id",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "target_layer",
+      "type": "enum(contract|shell|implementation)",
+      "required": false
+    },
+    {
+      "name": "target_branch",
+      "type": "string",
+      "required": false
+    }
+  ],
+  "exit_produces": [
+    {
+      "name": "plan_packet",
+      "type": "path"
+    },
+    {
+      "name": "request_instance",
+      "type": "path"
+    },
+    {
+      "name": "request_validation",
+      "type": "path"
+    },
+    {
+      "name": "contract_bindings",
+      "type": "path"
+    },
+    {
+      "name": "batch_manifest",
+      "type": "path"
+    },
+    {
+      "name": "integration_gate_plan",
+      "type": "path"
+    },
+    {
+      "name": "promotion_plan",
+      "type": "path"
+    },
+    {
+      "name": "decision",
+      "type": "enum(APPROVED|REJECTED|NEEDS_INFO)"
+    }
+  ],
+  "capabilities": [
+    "packet_generation",
+    "request_contract_emission",
+    "bounded_batch_planning",
+    "promotion_planning"
+  ],
+  "side_effects": [
+    "writes_files_under_wt_plan"
+  ],
+  "mutations": {
+    "repo": false,
+    "system": false,
+    "network": false
+  }
+}

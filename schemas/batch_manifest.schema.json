@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Batch manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "bounded_batch_id",
+    "target_layer",
+    "target_branch",
+    "integration_worktree_id",
+    "deliverables"
+  ],
+  "properties": {
+    "kind": {
+      "const": "bounded_batch_manifest.v1"
+    },
+    "bounded_batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_layer": {
+      "type": "string",
+      "enum": [
+        "contract",
+        "shell",
+        "implementation"
+      ]
+    },
+    "target_branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "integration_worktree_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deliverables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "deliverable_sets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "bounded_batch_deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "contract_deliverables",
+        "bounded_batch_deliverables"
+      ]
+    },
+    "integration_surface": {
+      "type": "string"
+    }
+  }
+}
