@@ -7,32 +7,32 @@
   "summary": "Generalizes the existing shell-first extension profile into a runtime-neutral CLI extension profile over the existing metadata model so shell and Python implementation adapters can coexist without introducing a parallel authority model.",
   "source_inputs": [
     {
-      "ref": "control/proposals/shell_cli_extension/extension_profile.v1.json",
+      "ref": "control/proposals/cli_extension_v2/basis/shell_cli_extension/extension_profile.v1.json",
       "kind": "profile_source",
       "role": "shell_first_profile_basis"
     },
     {
-      "ref": "control/proposals/shell_cli_extension/extension_constraints.example.json",
+      "ref": "control/proposals/cli_extension_v2/basis/shell_cli_extension/extension_constraints.example.json",
       "kind": "constraint_source",
       "role": "shell_first_constraint_basis"
     },
     {
-      "ref": "control/proposals/shell_cli_extension/python_cli_prospect.v1.md",
+      "ref": "control/proposals/cli_extension_v2/basis/shell_cli_extension/python_cli_prospect.v1.md",
       "kind": "prospect_source",
       "role": "python_cli_generalization_basis"
     },
     {
-      "ref": "control/proposals/shell_cli_extension/jsonargparse_projection_matrix.v1.json",
+      "ref": "control/proposals/cli_extension_v2/basis/shell_cli_extension/jsonargparse_projection_matrix.v1.json",
       "kind": "adapter_source",
       "role": "python_adapter_basis"
     },
     {
-      "ref": "/home/_404/Downloads/metadata/canonical_semantic_model.schema.json",
+      "ref": "control/proposals/cli_extension_v2/basis/metadata/canonical_semantic_model.schema.json",
       "kind": "schema_source",
       "role": "authoritative_metadata_middle"
     },
     {
-      "ref": "/home/_404/Downloads/metadata/projection_artifact_manifest.schema.json",
+      "ref": "control/proposals/cli_extension_v2/basis/metadata/projection_artifact_manifest.schema.json",
       "kind": "schema_source",
       "role": "projection_binding_contract"
     }
@@ -82,13 +82,8 @@
   "open_items": [
     {
       "id": "open-001",
-      "title": "Constraint refactor",
-      "detail": "The v1 shell-scoped constraint layer must be generalized from shell-specific role naming to runtime-neutral CLI role naming."
-    },
-    {
-      "id": "open-002",
-      "title": "Example migration",
-      "detail": "The current shell-first example artifacts need a runtime-neutral companion example or migration story."
+      "title": "Migration boundary",
+      "detail": "Readers and generators need an explicit migration boundary for shell_cli_role versus cli_role during the v1-to-v2 transition."
     }
   ],
   "resolved_items": [
@@ -101,6 +96,16 @@
       "id": "resolved-002",
       "title": "Python adapter target",
       "detail": "jsonargparse is selected as the first Python implementation adapter target."
+    },
+    {
+      "id": "resolved-003",
+      "title": "Constraint refactor",
+      "detail": "The v2 constraint layer now generalizes the role namespace from shell_cli_role to cli_role."
+    },
+    {
+      "id": "resolved-004",
+      "title": "Runtime-neutral examples",
+      "detail": "Runtime-neutral semantic and projection manifest example artifacts now exist for the v2 profile."
     }
   ]
 }

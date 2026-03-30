@@ -10,6 +10,12 @@ It exists to:
 - split implementation and verification targets by runtime family
 
 Files:
+- `basis/metadata/canonical_semantic_model.schema.json`
+- `basis/metadata/projection_artifact_manifest.schema.json`
+- `basis/shell_cli_extension/extension_profile.v1.json`
+- `basis/shell_cli_extension/extension_constraints.example.json`
+- `basis/shell_cli_extension/python_cli_prospect.v1.md`
+- `basis/shell_cli_extension/jsonargparse_projection_matrix.v1.json`
 - `spec_draft.v2.json`
 - `proposal_register.v2.json`
 - `gate_result.v2.json`
@@ -23,6 +29,7 @@ Files:
 
 Current status:
 - proposal draft with runtime-neutral constraints, example artifacts, and compatibility assessment
+- portable review basis is vendored locally under `basis/`
 
 Direction:
 - canonical metadata model remains authority

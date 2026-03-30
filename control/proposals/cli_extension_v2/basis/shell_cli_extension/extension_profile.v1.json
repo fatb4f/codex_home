@@ -1,24 +1,24 @@
 {
   "artifact_type": "extension_profile",
-  "artifact_version": "v2",
-  "profile_id": "cli_extension_profile_v2",
-  "title": "Runtime-Neutral CLI Semantic Extension Profile",
+  "artifact_version": "v1",
+  "profile_id": "shell_cli_extension_profile",
+  "title": "Shell / CLI Semantic Extension Profile",
   "status": "draft",
   "base_model_refs": [
-    "control/proposals/cli_extension_v2/basis/metadata/canonical_semantic_model.schema.json",
-    "control/proposals/cli_extension_v2/basis/metadata/projection_artifact_manifest.schema.json"
+    "/home/_404/Downloads/metadata/canonical_semantic_model.schema.json",
+    "/home/_404/Downloads/metadata/projection_artifact_manifest.schema.json"
   ],
   "lineage": {
     "extends": "canonical_semantic_model",
     "does_not_introduce_parallel_authority_model": true,
-    "runtime_assets_remain_projection_only": true
+    "shell_assets_remain_projection_only": true
   },
   "semantic_profile": {
-    "object_strategy": "use_existing_object_kinds_with_cli_role_attributes",
+    "object_strategy": "use_existing_object_kinds_with_shell_cli_role_attributes",
     "supported_object_patterns": [
       {
         "object_kind": "artifact_target",
-        "cli_role": "command_surface",
+        "shell_cli_role": "command_surface",
         "required_attributes": [
           "command_path",
           "handler_id",
@@ -27,7 +27,7 @@
       },
       {
         "object_kind": "other",
-        "cli_role": "parameter_surface",
+        "shell_cli_role": "parameter_surface",
         "required_attributes": [
           "parameter_kind",
           "command_ref"
@@ -35,35 +35,35 @@
       },
       {
         "object_kind": "other",
-        "cli_role": "environment_binding",
+        "shell_cli_role": "environment_binding",
         "required_attributes": [
           "env_name"
         ]
       },
       {
         "object_kind": "other",
-        "cli_role": "dependency_requirement",
+        "shell_cli_role": "dependency_requirement",
         "required_attributes": [
           "dependency_name"
         ]
       },
       {
         "object_kind": "other",
-        "cli_role": "usage_example",
+        "shell_cli_role": "usage_example",
         "required_attributes": [
           "command_line"
         ]
       },
       {
         "object_kind": "policy",
-        "cli_role": "output_contract",
+        "shell_cli_role": "output_contract",
         "required_attributes": [
           "output_mode"
         ]
       },
       {
         "object_kind": "other",
-        "cli_role": "verification_expectation",
+        "shell_cli_role": "verification_expectation",
         "required_attributes": [
           "expectation_kind"
         ]
@@ -84,7 +84,7 @@
       },
       {
         "relation_kind": "projects_to",
-        "usage": "semantic_cli_targets_project_to_runtime_adapter_artifacts"
+        "usage": "semantic_shell_targets_project_to_backend_artifacts"
       },
       {
         "relation_kind": "references",
@@ -93,7 +93,7 @@
     ]
   },
   "projection_profile": {
-    "shell_implementation_targets": [
+    "implementation_targets": [
       {
         "backend": "bashly",
         "projection_role": "implementation_target",
@@ -110,14 +110,7 @@
         "canonical_target_kind": "config_projection"
       }
     ],
-    "python_implementation_targets": [
-      {
-        "backend": "jsonargparse",
-        "projection_role": "implementation_target",
-        "canonical_target_kind": "codegen_input"
-      }
-    ],
-    "shell_verification_targets": [
+    "verification_targets": [
       {
         "backend": "bats",
         "projection_role": "verification_consumer",
@@ -128,21 +121,14 @@
         "projection_role": "verification_consumer",
         "canonical_target_kind": "other"
       }
-    ],
-    "python_verification_targets": [
-      {
-        "backend": "pytest",
-        "projection_role": "verification_consumer",
-        "canonical_target_kind": "other"
-      }
     ]
   },
+  "constraint_layer": {
+    "schema_ref": "control/proposals/shell_cli_extension/extension_constraints.schema.json",
+    "example_ref": "control/proposals/shell_cli_extension/extension_constraints.example.json",
+    "status": "present_and_validated"
+  },
   "open_items": [
-    "decide whether verification targets warrant a narrower target_kind than other",
-    "define a migration boundary for readers and generators consuming shell_cli_role versus cli_role artifacts"
-  ],
-  "resolved_items": [
-    "schema-backed extension constraints have been generalized from shell_cli_role to cli_role",
-    "runtime-neutral semantic and projection examples exist"
+    "decide whether verification targets warrant a narrower target_kind than other"
   ]
 }
