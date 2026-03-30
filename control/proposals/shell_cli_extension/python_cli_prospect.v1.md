@@ -112,6 +112,7 @@ Probable implementation adapters:
 - `argparse`
 - `click`
 - `typer`
+- `jsonargparse`
 
 Probable verification adapters:
 - `pytest`
@@ -161,6 +162,18 @@ These should stay adapter-side where possible, not become core authority fields 
 The current profile still uses `canonical_target_kind = other` for verification targets.
 
 That is workable for now, but it is weak if we expect both shell and Python verification families.
+
+## Current recommended first Python adapter target
+
+`jsonargparse` is the strongest current first target because it already combines:
+- parser and subcommand structure
+- config-file support
+- environment parsing
+- nested namespaces
+- type-hint-aware validation
+
+The companion machine-readable adapter artifact is:
+- `jsonargparse_projection_matrix.v1.json`
 
 ## Recommended Decision
 

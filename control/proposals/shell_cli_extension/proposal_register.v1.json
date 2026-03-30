@@ -62,6 +62,11 @@
       "role": "python_cli_future_assessment"
     },
     {
+      "ref": "control/proposals/shell_cli_extension/jsonargparse_projection_matrix.v1.json",
+      "kind": "adapter_artifact",
+      "role": "jsonargparse_python_adapter_matrix"
+    },
+    {
       "ref": "control/shell/shell_script_inventory.json",
       "kind": "inventory_artifact",
       "role": "current_projection_baseline"
