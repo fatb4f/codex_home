@@ -2,8 +2,8 @@
   "artifact_type": "proposal_gate_result",
   "artifact_version": "v2",
   "proposal_id": "cli-extension-profile-v2",
-  "gate_status": "conditional_pass_with_underspecification",
-  "result_summary": "The runtime-neutral v2 direction is coherent and preserves the existing metadata authority baseline while generalizing the shell-first profile toward shell and Python adapter families. It is now backed by runtime-neutral constraints, example artifacts, and a compatibility assessment, and is ready to move beyond the proposal register toward amendment review.",
+  "gate_status": "pass",
+  "result_summary": "The runtime-neutral v2 direction is coherent and preserves the existing metadata authority baseline while generalizing the shell-first profile toward shell and Python adapter families. It is now backed by runtime-neutral constraints, example artifacts, a compatibility assessment, a primary unified realization runner, and normalized unified manifest/report contracts.",
   "passes": [
     "existing metadata model remains the authority baseline",
     "runtime assets are classified as projection-only",
@@ -18,12 +18,16 @@
     "the first concrete Bashly target is wired to the upstream minimal example",
     "the first Bashly minimal transform emits deterministic source surfaces and is covered by local tests",
     "the first jsonargparse minimal transform emits deterministic source surfaces and is covered by local tests",
-    "a broader realization runner now orchestrates the bounded Bashly and jsonargparse slices into one unified build tree"
+    "a broader realization runner now orchestrates the bounded Bashly and jsonargparse slices into one unified build tree",
+    "the unified realization runner is explicitly the primary operator surface for this lane",
+    "the bounded emitters are treated as internal projection surfaces rather than operator authority",
+    "the unified realization manifest and report contracts now exist as explicit schema artifacts",
+    "verification projections are emitted under runner ownership rather than as separate operator surfaces"
   ],
   "underspecified_items": [],
   "next_actions": [
-    "decide whether to treat the unified realization runner as the primary operator surface or keep the bounded emitters separately exposed",
-    "extend the same runner to generate richer verification consumers rather than only the current minimal Bats/pytest outputs"
+    "promote the unified manifest/report schemas into the next amendment-facing realization packet when this lane is packetized again",
+    "extend the same runner with richer contract-driven verification generation beyond the current minimal Bats/pytest projections"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }

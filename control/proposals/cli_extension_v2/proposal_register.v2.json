@@ -133,12 +133,22 @@
     {
       "ref": "control/proposals/cli_extension_v2/control_realize_cli_extension_v2.py",
       "kind": "workflow_artifact",
-      "role": "unified_realization_runner"
+      "role": "primary_operator_surface"
     },
     {
       "ref": "control/proposals/cli_extension_v2/test_control_realize_cli_extension_v2.py",
       "kind": "verification_artifact",
       "role": "unified_realization_runner_tests"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_manifest.v2.schema.json",
+      "kind": "schema_artifact",
+      "role": "unified_manifest_contract"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_report.v2.schema.json",
+      "kind": "schema_artifact",
+      "role": "unified_report_contract"
     },
     {
       "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
@@ -162,7 +172,11 @@
       "first_bashly_minimal_transform_exists",
       "first_jsonargparse_realization_target_is_wired",
       "first_jsonargparse_minimal_transform_exists",
-      "unified_realization_runner_exists"
+      "unified_realization_runner_exists",
+      "unified_realization_runner_is_primary_operator_surface",
+      "unified_manifest_contract_exists",
+      "unified_report_contract_exists",
+      "verification_projections_are_runner_owned"
     ],
     "still_required_before_amendment": []
   },
@@ -173,6 +187,8 @@
     "The first concrete Bashly target is deliberately constrained to the upstream minimal example so transform work can start from the smallest truthful Bashly source tree.",
     "The first Bashly emitter currently realizes source surfaces and reports downstream bashly-generate availability instead of pretending the second-stage build ran.",
     "The first jsonargparse emitter currently realizes source surfaces and reports runtime availability honestly when jsonargparse is not installed in the environment.",
-    "The broader realization runner now orchestrates the bounded Bashly and jsonargparse slices and emits a unified build tree plus aggregate manifest/report."
+    "The broader realization runner now orchestrates the bounded Bashly and jsonargparse slices and emits a unified build tree plus aggregate manifest/report.",
+    "The bounded emitters are internal projection surfaces; the unified realization runner is the primary operator surface for this lane.",
+    "The unified runner owns the Bats and pytest verification projections rather than exposing them as separate authority surfaces."
   ]
 }

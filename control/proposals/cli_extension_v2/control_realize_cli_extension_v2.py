@@ -30,6 +30,8 @@ ALLOWED_ARTIFACT_KINDS = {
     "verification_projection",
 }
 
+PRIMARY_OPERATOR_SURFACE = "control_realize_cli_extension_v2.py"
+
 
 class RealizationError(Exception):
     pass
@@ -42,6 +44,10 @@ def load_json(path: Path) -> dict[str, Any]:
         raise RealizationError(f"missing JSON artifact: {path}") from exc
     except json.JSONDecodeError as exc:
         raise RealizationError(f"invalid JSON in {path}: {exc}") from exc
+
+
+def load_schema(path: Path) -> dict[str, Any]:
+    return load_json(path)
 
 
 def require_keys(obj: dict[str, Any], keys: list[str], ctx: str) -> None:
@@ -145,6 +151,49 @@ def read_child_report(path: Path) -> dict[str, Any]:
     return load_json(path)
 
 
+def validate_unified_document(document: dict[str, Any], schema: dict[str, Any], ctx: str) -> None:
+    require_keys(document, list(schema.get("required", [])), ctx)
+    properties = schema.get("properties", {})
+    additional_allowed = bool(schema.get("additionalProperties", True))
+    if not additional_allowed:
+        extra = sorted(set(document) - set(properties))
+        if extra:
+            raise RealizationError(f"{ctx} has unexpected keys: {', '.join(extra)}")
+    for key, prop in properties.items():
+        if key not in document:
+            continue
+        value = document[key]
+        if "const" in prop and value != prop["const"]:
+            raise RealizationError(f"{ctx}.{key} must equal {prop['const']!r}")
+        prop_type = prop.get("type")
+        if prop_type == "string" and not isinstance(value, str):
+            raise RealizationError(f"{ctx}.{key} must be a string")
+        if prop_type == "boolean" and not isinstance(value, bool):
+            raise RealizationError(f"{ctx}.{key} must be a boolean")
+        if prop_type == "integer" and not isinstance(value, int):
+            raise RealizationError(f"{ctx}.{key} must be an integer")
+        if prop_type == "array":
+            if not isinstance(value, list):
+                raise RealizationError(f"{ctx}.{key} must be an array")
+            item_schema = prop.get("items", {})
+            if item_schema.get("type") == "object":
+                for idx, item in enumerate(value):
+                    if not isinstance(item, dict):
+                        raise RealizationError(f"{ctx}.{key}[{idx}] must be an object")
+                    validate_unified_document(item, item_schema, f"{ctx}.{key}[{idx}]")
+            elif item_schema.get("type") == "string":
+                for idx, item in enumerate(value):
+                    if not isinstance(item, str):
+                        raise RealizationError(f"{ctx}.{key}[{idx}] must be a string")
+        if prop_type == "object":
+            if not isinstance(value, dict):
+                raise RealizationError(f"{ctx}.{key} must be an object")
+            nested_required = prop.get("required", [])
+            for nested_key in nested_required:
+                if nested_key not in value:
+                    raise RealizationError(f"{ctx}.{key} missing required key: {nested_key}")
+
+
 def render_bats_suite(script_relpath: str) -> str:
     return (
         "#!/usr/bin/env bats\n"
@@ -181,18 +230,21 @@ def copy_file(src: Path, dest: Path) -> None:
     shutil.copy2(src, dest)
 
 
-def build_unified_manifest(
-    root: Path,
-    payload: dict[str, Any],
-    emitted: list[dict[str, Any]],
-) -> Path:
+def build_unified_manifest(root: Path, payload: dict[str, Any], emitted: list[dict[str, Any]]) -> Path:
     path = root / "build" / "realization_manifest.json"
     manifest = {
         "document_type": "realization_manifest",
+        "schema_version": "v2",
         "workflow_command": payload["workflow"]["command"],
         "deterministic": payload["workflow"]["deterministic"],
+        "primary_operator_surface": PRIMARY_OPERATOR_SURFACE,
         "targets": emitted,
     }
+    validate_unified_document(
+        manifest,
+        load_schema(Path(__file__).resolve().parent / "unified_realization_manifest.v2.schema.json"),
+        "realization_manifest",
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return path
@@ -207,12 +259,19 @@ def build_unified_report(
     path = root / "build" / "realization_report.json"
     report = {
         "document_type": "realization_report",
+        "schema_version": "v2",
         "status": "success",
         "payload_path": str(payload_path),
+        "primary_operator_surface": PRIMARY_OPERATOR_SURFACE,
         "realized_count": len(emitted),
         "targets": emitted,
         "backend_reports": backend_reports,
     }
+    validate_unified_document(
+        report,
+        load_schema(Path(__file__).resolve().parent / "unified_realization_report.v2.schema.json"),
+        "realization_report",
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return path
@@ -265,10 +324,14 @@ def main(argv: list[str] | None = None) -> int:
                     {
                         "target_id": target_id,
                         "backend": backend,
+                        "adapter_family": str(target["adapter_family"]),
+                        "projection_role": str(target["projection_role"]),
                         "artifact_kind": artifact_kind,
                         "repo_path": repo_path,
                         "output_path": str(actual),
                         "source_project_root": str(bashly_project_root),
+                        "semantic_inputs": [str(x) for x in target["inputs"]],
+                        "generated_by": PRIMARY_OPERATOR_SURFACE,
                     }
                 )
             elif backend == "jsonargparse":
@@ -277,10 +340,14 @@ def main(argv: list[str] | None = None) -> int:
                     {
                         "target_id": target_id,
                         "backend": backend,
+                        "adapter_family": str(target["adapter_family"]),
+                        "projection_role": str(target["projection_role"]),
                         "artifact_kind": artifact_kind,
                         "repo_path": repo_path,
                         "output_path": str(actual),
                         "source_project_root": str(jsonargparse_project_root),
+                        "semantic_inputs": [str(x) for x in target["inputs"]],
+                        "generated_by": PRIMARY_OPERATOR_SURFACE,
                     }
                 )
             elif backend == "pytest":
@@ -291,10 +358,14 @@ def main(argv: list[str] | None = None) -> int:
                     {
                         "target_id": target_id,
                         "backend": backend,
+                        "adapter_family": str(target["adapter_family"]),
+                        "projection_role": str(target["projection_role"]),
                         "artifact_kind": artifact_kind,
                         "repo_path": repo_path,
                         "output_path": str(dest),
                         "source_project_root": str(jsonargparse_project_root),
+                        "semantic_inputs": [str(x) for x in target["inputs"]],
+                        "generated_by": PRIMARY_OPERATOR_SURFACE,
                     }
                 )
             elif backend == "bats":
@@ -305,10 +376,14 @@ def main(argv: list[str] | None = None) -> int:
                     {
                         "target_id": target_id,
                         "backend": backend,
+                        "adapter_family": str(target["adapter_family"]),
+                        "projection_role": str(target["projection_role"]),
                         "artifact_kind": artifact_kind,
                         "repo_path": repo_path,
                         "output_path": str(dest),
                         "source_project_root": str(bashly_project_root),
+                        "semantic_inputs": [str(x) for x in target["inputs"]],
+                        "generated_by": PRIMARY_OPERATOR_SURFACE,
                     }
                 )
 

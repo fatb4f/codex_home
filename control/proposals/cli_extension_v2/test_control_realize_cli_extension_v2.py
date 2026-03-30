@@ -48,14 +48,23 @@ def test_realize_emits_unified_projection_tree(tmp_path: Path):
 
     manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
     assert manifest_data["document_type"] == "realization_manifest"
+    assert manifest_data["schema_version"] == "v2"
+    assert manifest_data["primary_operator_surface"] == "control_realize_cli_extension_v2.py"
     assert len(manifest_data["targets"]) == 4
     repo_paths = {item["repo_path"] for item in manifest_data["targets"]}
     assert "build/bashly/control_plane_inspect/bashly.yml" in repo_paths
     assert "build/python/control_plane_inspect/parser.py" in repo_paths
     assert "build/tests/shell/control_plane_inspect.bats" in repo_paths
     assert "build/tests/python/test_control_plane_inspect.py" in repo_paths
+    for item in manifest_data["targets"]:
+        assert item["generated_by"] == "control_realize_cli_extension_v2.py"
+        assert item["semantic_inputs"]
+        assert item["adapter_family"]
+        assert item["projection_role"]
 
     report_data = json.loads(report.read_text(encoding="utf-8"))
     assert report_data["status"] == "success"
+    assert report_data["schema_version"] == "v2"
+    assert report_data["primary_operator_surface"] == "control_realize_cli_extension_v2.py"
     assert report_data["backend_reports"]["bashly"]["checks"]["downstream_bashly_generate"]["generate"]["status"] == "ok"
     assert report_data["backend_reports"]["jsonargparse"]["checks"]["downstream_pytest"]["status"] in {"ok", "failed", "unavailable_in_environment"}
