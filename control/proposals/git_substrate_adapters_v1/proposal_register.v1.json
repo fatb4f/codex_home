@@ -35,6 +35,21 @@
       "role": "git_substrate_adapter_profile"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/canonical_semantic_model.git.example.json",
+      "kind": "example_artifact",
+      "role": "git_substrate_semantic_example"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/projection_artifact_manifest.git.example.json",
+      "kind": "example_artifact",
+      "role": "git_substrate_projection_manifest_example"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/realization_payload.v1.json",
+      "kind": "workflow_artifact",
+      "role": "git_substrate_realization_payload"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/gix_target_contract.v1.json",
       "kind": "target_contract",
       "role": "deterministic_git_fact_target"
@@ -66,19 +81,20 @@
       "gix_is_classified_as_deterministic_git_fact_surface",
       "sem_is_classified_as_semantic_diff_enrichment_surface",
       "git_adapter_outputs_remain_projection_only",
+      "git_substrate_semantic_example_exists",
+      "git_substrate_realization_payload_exists",
       "target_contracts_exist_for_gix_and_sem",
       "implementation_is_explicitly_deferred_until_after_contract_review",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
     "still_required_before_amendment": [
-      "define a Git-substrate semantic example",
-      "define a Git-substrate realization payload",
       "define compatibility and migration posture if a new git_substrate_role namespace is introduced"
     ]
   },
   "notes": [
     "This proposal opens the Git-substrate lane without implementing adapters prematurely.",
     "gix and sem are projected adapters, not authority surfaces.",
-    "The next substantive step after this proposal is a Git-substrate semantic example plus realization payload."
+    "A first Git-substrate semantic example and realization payload now exist.",
+    "The next substantive step after this proposal is a Git-substrate realization runner and compatibility posture."
   ]
 }

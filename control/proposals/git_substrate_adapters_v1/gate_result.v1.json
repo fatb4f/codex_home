@@ -3,23 +3,24 @@
   "artifact_version": "v1",
   "proposal_id": "git-substrate-adapters-v1",
   "gate_status": "conditional_pass_with_underspecification",
-  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear and first target contracts for gix and sem now exist, but semantic examples and realization payloads are still missing.",
+  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear, target contracts for gix and sem exist, and the lane now has a semantic example plus a first realization payload. Compatibility posture and runner implementation remain open.",
   "passes": [
     "existing metadata remains the authority baseline",
     "gix is classified as the deterministic Git fact surface",
     "sem is classified as the semantic diff enrichment surface",
     "Git adapter outputs are kept in the projection lane",
     "first target contracts for gix and sem exist",
-    "the normalized realization pattern from cli_extension_v2 is named as the intended reuse path"
+    "the normalized realization pattern from cli_extension_v2 is named as the intended reuse path",
+    "a Git-substrate semantic example exists for repo_state, diff_state, semantic_diff, and review_basis surfaces",
+    "a first Git-substrate realization payload exists for state_projection and enrichment_projection targets"
   ],
   "underspecified_items": [
-    "no Git-substrate semantic example exists yet",
-    "no Git-substrate realization payload exists yet",
+    "no Git-substrate compatibility assessment exists yet",
     "no Git-substrate manifest/report runner exists yet"
   ],
   "next_actions": [
-    "define a Git-substrate semantic example using the existing metadata model",
-    "define a Git-substrate realization payload and workflow contract that reuse the normalized manifest/report pattern",
+    "define compatibility and migration posture for the git_substrate_role namespace",
+    "define a Git-substrate realization runner and workflow contract that reuse the normalized manifest/report pattern",
     "only after that, implement the first gix and sem transforms"
   ],
   "promotion_decision": "hold_at_proposal_register"

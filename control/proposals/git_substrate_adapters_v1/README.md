@@ -13,6 +13,9 @@ It exists to:
 Files:
 - `spec_draft.v1.json`
 - `extension_profile.v1.json`
+- `canonical_semantic_model.git.example.json`
+- `projection_artifact_manifest.git.example.json`
+- `realization_payload.v1.json`
 - `gix_target_contract.v1.json`
 - `sem_target_contract.v1.json`
 - `proposal_register.v1.json`
@@ -23,6 +26,8 @@ Current status:
 - `gix` is scoped as the deterministic Git fact surface
 - `sem` is scoped as the semantic diff enrichment surface
 - target contracts exist at the proposal boundary
+- a first Git-substrate semantic example now exists
+- a first Git-substrate realization payload now exists
 - implementation and verification runners are intentionally deferred
 
 Direction:

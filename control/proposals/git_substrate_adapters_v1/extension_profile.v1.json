@@ -89,11 +89,12 @@
     ]
   },
   "open_items": [
-    "define the runtime-neutral Git object example for repo_state and semantic_diff surfaces",
-    "define the first Git-substrate realization payload and runner contract"
+    "define the first Git-substrate realization runner contract"
   ],
   "resolved_items": [
     "gix and sem are classified as projected Git-substrate adapters rather than authority surfaces",
-    "the normalized realization pattern from cli_extension_v2 is the intended implementation path"
+    "the normalized realization pattern from cli_extension_v2 is the intended implementation path",
+    "a Git-substrate semantic example exists for repo_state, diff_state, semantic_diff, and review_basis surfaces",
+    "a Git-substrate realization payload exists for the first gix and sem target set"
   ]
 }

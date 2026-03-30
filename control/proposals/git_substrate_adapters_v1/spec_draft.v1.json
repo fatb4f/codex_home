@@ -80,6 +80,16 @@
       "id": "resolved-002",
       "title": "Adapter classification",
       "detail": "gix is the deterministic Git fact surface and sem is the semantic diff enrichment surface."
+    },
+    {
+      "id": "resolved-003",
+      "title": "Git semantic example",
+      "detail": "A first canonical semantic example now exists for repo_state, diff_state, semantic_diff, and review_basis surfaces."
+    },
+    {
+      "id": "resolved-004",
+      "title": "Git realization payload",
+      "detail": "A first realization payload now exists for state_projection and enrichment_projection targets."
     }
   ]
 }
