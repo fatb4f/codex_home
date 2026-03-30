@@ -101,6 +101,16 @@
       "role": "first_bashly_realization_target_human_readable"
     },
     {
+      "ref": "control/proposals/cli_extension_v2/emit_bashly_minimal.py",
+      "kind": "transform_artifact",
+      "role": "first_bashly_minimal_transform"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/test_emit_bashly_minimal.py",
+      "kind": "verification_artifact",
+      "role": "first_bashly_minimal_transform_tests"
+    },
+    {
       "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
       "kind": "prospect_artifact",
       "role": "projection_generation_orchestration_backend_prospect"
@@ -118,7 +128,8 @@
       "compatibility_assessment_exists",
       "realization_payload_exists",
       "realization_workflow_contract_exists",
-      "first_bashly_realization_target_is_wired"
+      "first_bashly_realization_target_is_wired",
+      "first_bashly_minimal_transform_exists"
     ],
     "still_required_before_amendment": []
   },
@@ -126,6 +137,7 @@
     "This v2 proposal is a forward refactor and does not invalidate the shell-first approved packet slice.",
     "The existing metadata model remains the sole authority baseline.",
     "Basis artifacts required for portable review are vendored under control/proposals/cli_extension_v2/basis.",
-    "The first concrete Bashly target is deliberately constrained to the upstream minimal example so transform work can start from the smallest truthful Bashly source tree."
+    "The first concrete Bashly target is deliberately constrained to the upstream minimal example so transform work can start from the smallest truthful Bashly source tree.",
+    "The first Bashly emitter currently realizes source surfaces and reports downstream bashly-generate availability instead of pretending the second-stage build ran."
   ]
 }

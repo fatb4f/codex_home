@@ -29,6 +29,8 @@ Files:
 - `realization_workflow_contract.v2.md`
 - `bashly_target_contract.minimal.v1.json`
 - `bashly_target_contract.minimal.v1.md`
+- `emit_bashly_minimal.py`
+- `test_emit_bashly_minimal.py`
 - `hof_prospect.v1.md`
 
 Current status:
@@ -36,10 +38,12 @@ Current status:
 - portable review basis is vendored locally under `basis/`
 - realization boundary is now defined for adapter-facing follow-on slices
 - the first concrete Bashly realization target is now wired to the upstream `examples/minimal` shape
+- the first concrete Bashly minimal emitter now exists and emits `src/bashly.yml` plus `src/root_command.sh`
 
 Direction:
 - canonical metadata model remains authority
 - runtime assets remain projection-only
 - shell and Python adapters become runtime families under one CLI profile
 - the first Bashly adapter slice is intentionally bounded to `src/bashly.yml` plus `src/root_command.sh`
+- downstream `bashly generate` remains a distinct second-stage build and is reported honestly when unavailable in the environment
 - `hof` is tracked as a projection-generation-orchestration prospect, not a runtime adapter
