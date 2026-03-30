@@ -11,6 +11,7 @@ Files:
 - `extension_constraints.example.json`
 - `amendment_slice.bashly_bats.v1.json`
 - `bashly_projection_matrix.v1.json`
+- `bashly_schema_crosswalk.v1.md`
 - `canonical_semantic_model.shell_cli.example.json`
 - `projection_artifact_manifest.shell_cli.example.json`
 
@@ -24,3 +25,4 @@ Direction:
 - shell/CLI extension rules are constrained explicitly without modifying the base metadata schemas
 - first amendment-facing slice is scoped to `Bashly` + `Bats`
 - Bashly is reduced to adapter primitives, required config surfaces, and a projection matrix rather than treated as authority
+- the Bashly schema crosswalk is the human-readable companion to the projection matrix

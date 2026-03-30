@@ -52,6 +52,11 @@
       "role": "bashly_projection_matrix"
     },
     {
+      "ref": "control/proposals/shell_cli_extension/bashly_schema_crosswalk.v1.md",
+      "kind": "crosswalk_artifact",
+      "role": "human_readable_bashly_crosswalk"
+    },
+    {
       "ref": "control/shell/shell_script_inventory.json",
       "kind": "inventory_artifact",
       "role": "current_projection_baseline"
