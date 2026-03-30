@@ -1,0 +1,25 @@
+{
+  "artifact_type": "proposal_gate_result",
+  "artifact_version": "v1",
+  "proposal_id": "shell-cli-extension-profile",
+  "gate_status": "conditional_pass_with_underspecification",
+  "result_summary": "The shell/CLI extension direction is coherent and correctly grounded in the existing metadata model, but the semantic extension profile and projection binding rules are not yet formalized enough for kernel amendment.",
+  "passes": [
+    "existing metadata model is kept as the authority baseline",
+    "shell assets are classified as projection assets",
+    "implementation backends are classified as projection targets",
+    "verification backends are classified as projection consumers",
+    "shell policy and inventory are aligned with the projection-only posture"
+  ],
+  "underspecified_items": [
+    "formal shell_cli semantic profile for commands, params, env bindings, examples, dependencies, output contracts, and verification expectations",
+    "formal projection binding rules from shell semantic targets to Bashly, argc, Argbash, Bats, and ShellSpec",
+    "compatibility and extension impact against the current metadata model"
+  ],
+  "next_actions": [
+    "define the shell_cli extension profile as a semantic-model specialization",
+    "define example projection bindings for one implementation backend and one verification backend",
+    "re-run proposal gating after the extension profile is explicit"
+  ],
+  "promotion_decision": "hold_at_proposal_register"
+}
