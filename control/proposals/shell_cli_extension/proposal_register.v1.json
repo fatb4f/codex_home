@@ -57,6 +57,11 @@
       "role": "human_readable_bashly_crosswalk"
     },
     {
+      "ref": "control/proposals/shell_cli_extension/python_cli_prospect.v1.md",
+      "kind": "prospect_artifact",
+      "role": "python_cli_future_assessment"
+    },
+    {
       "ref": "control/shell/shell_script_inventory.json",
       "kind": "inventory_artifact",
       "role": "current_projection_baseline"
