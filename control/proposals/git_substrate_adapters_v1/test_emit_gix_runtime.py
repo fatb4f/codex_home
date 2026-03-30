@@ -22,3 +22,6 @@ def test_check_only_reports_runtime_status():
     data = json.loads(result.stdout if result.stdout.strip() else result.stderr)
     assert data["runtime_kind"] == "gix"
     assert data["status"] in {"ok", "runtime_unavailable"}
+    if data["status"] == "ok":
+        assert data["build_backend"] == "cargo"
+        assert data["crate_surface"] == "gix"

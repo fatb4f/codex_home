@@ -121,6 +121,21 @@
       "role": "deterministic_git_fact_runtime_probe"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/gix_runtime_helper/Cargo.toml",
+      "kind": "runtime_artifact",
+      "role": "deterministic_git_fact_helper_manifest"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/gix_runtime_helper/Cargo.lock",
+      "kind": "runtime_artifact",
+      "role": "deterministic_git_fact_helper_lockfile"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/gix_runtime_helper/src/main.rs",
+      "kind": "runtime_artifact",
+      "role": "deterministic_git_fact_helper_entrypoint"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/emit_sem_runtime.py",
       "kind": "runtime_artifact",
       "role": "semantic_diff_enrichment_runtime_emitter"
@@ -176,7 +191,7 @@
       "target_contracts_exist_for_gix_and_sem",
       "runtime_contracts_exist_for_gix_and_sem",
       "sem_real_runtime_path_is_integrated",
-      "gix_runtime_unavailable_state_is_explicit",
+      "gix_real_runtime_path_is_integrated",
       "shell_and_python_port_inventories_exist",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
@@ -191,7 +206,7 @@
     "Runner-owned Git transform logic is now split into bounded gix and sem emitter artifacts.",
     "Real-runtime contracts for gix and sem now distinguish the pending adapter integration work from the minimal proof path.",
     "sem now has a real local runtime integration path via ataraxy/sem.",
-    "gix remains explicit fallback-only until a real runtime source/build path is available.",
+    "gix now has a real local runtime integration path via a repo-local Rust helper crate that uses the gix crate directly.",
     "Shell and Python port inventories now define the next repo-local migration tranche.",
     "The next substantive step after this proposal is real adapter integration and script migration, not more proposal framing."
   ]

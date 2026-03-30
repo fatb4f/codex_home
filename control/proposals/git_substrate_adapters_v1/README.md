@@ -29,6 +29,9 @@ Files:
 - `sem_target_contract.v1.json`
 - `gix_runtime_contract.v1.json`
 - `sem_runtime_contract.v1.json`
+- `gix_runtime_helper/Cargo.toml`
+- `gix_runtime_helper/Cargo.lock`
+- `gix_runtime_helper/src/main.rs`
 - `shell_port_inventory.v1.json`
 - `python_port_inventory.v1.json`
 - `proposal_register.v1.json`
@@ -48,7 +51,7 @@ Current status:
 - real-runtime contracts for `gix` and `sem` are now explicit
 - first shell and Python port inventories now exist for the repo-local scripts
 - `sem` now has a real local runtime path through the checked-out `ataraxy/sem` source tree
-- `gix` still falls back to the minimal emitter with explicit runtime-unavailable reporting because no local `gix` runtime source is present
+- `gix` now has a real local runtime path through a repo-local Rust helper that uses the `gix` crate directly
 
 Direction:
 - canonical metadata remains authority
@@ -58,6 +61,7 @@ Direction:
 - implementation reuses the normalized realization pattern already established in `cli_extension_v2`
 - the unified runner remains the primary operator surface and owns aggregation plus normalized manifest/report emission
 - `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner
-- runtime contracts now separate minimal projection proof from real adapter integration work
+- runtime contracts now separate minimal projection proof from crate-backed/local-backend integration work
 - port inventories now separate real operator-entrypoint migration candidates from projection internals
 - the runner now distinguishes real backend execution from minimal fallback in backend reports
+- the `gix` runtime path is crate-backed and does not rely on parsing the `gix` CLI output surface
