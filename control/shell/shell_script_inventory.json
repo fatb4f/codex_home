@@ -1,0 +1,117 @@
+{
+  "inventory_id": "src.workspace.shell_script_inventory",
+  "version": "0.1.0",
+  "scope": "managed_workspace_shell_automation_surfaces",
+  "root": "/home/_404/src",
+  "exclusions": [
+    ".git/**",
+    "_notrack/**",
+    "_worktrees/**",
+    "third_party_or_vendor_surfaces_not_owned_as_primary_workspace_policy"
+  ],
+  "generated_note": "This inventory is a workspace baseline. It focuses on managed shell automation surfaces and summary counts, not every third-party or ephemeral script under the tree.",
+  "summary": {
+    "tracked_shell_assets": 50,
+    "bashly_wrapped_assets": 0,
+    "just_exposed_assets": 0,
+    "top_level_counts": {
+      "kernel": 23,
+      "dotfiles": 18,
+      "gpt-registry": 4,
+      "codex_home": 1,
+      "runtime": 9,
+      "codex": 15,
+      "repo_intel": 36,
+      "tmp": 10
+    }
+  },
+  "assets": [
+    {
+      "asset_id": "github.bootstrap_control_plane_project",
+      "path": "control/github/bootstrap_control_plane_project.sh",
+      "repo": "codex_home",
+      "language": "bash",
+      "role": "cross_repo_management_bootstrap",
+      "entry_surface": "direct_shell_script",
+      "structured_output": "partial",
+      "current_contract_markers": [
+        "bash_shebang",
+        "set_euo_pipefail",
+        "reproducible_project_bootstrap"
+      ],
+      "planned_transition": {
+        "target_surface": "bashly_plus_just",
+        "status": "planned"
+      }
+    },
+    {
+      "asset_id": "kernel.run_metadata_metaschema_lane",
+      "path": "/home/_404/src/kernel/scripts/run_metadata_metaschema_lane.sh",
+      "repo": "kernel",
+      "language": "bash",
+      "role": "kernel_slice_runner",
+      "entry_surface": "direct_shell_script",
+      "structured_output": "partial",
+      "current_contract_markers": [
+        "bash_shebang",
+        "set_euo_pipefail",
+        "deterministic_slice_execution"
+      ],
+      "planned_transition": {
+        "target_surface": "bashly_plus_just",
+        "status": "planned"
+      }
+    },
+    {
+      "asset_id": "kernel.reference_docs_validate",
+      "path": "/home/_404/src/kernel/scripts/reference_docs_validate.sh",
+      "repo": "kernel",
+      "language": "bash",
+      "role": "reference_docs_validation",
+      "entry_surface": "direct_shell_script",
+      "structured_output": "partial",
+      "current_contract_markers": [
+        "bash_shebang",
+        "set_euo_pipefail"
+      ],
+      "planned_transition": {
+        "target_surface": "bashly_plus_just",
+        "status": "planned"
+      }
+    },
+    {
+      "asset_id": "dotfiles.package_inventory",
+      "path": "/home/_404/src/dotfiles/scripts/package_inventory.sh",
+      "repo": "dotfiles",
+      "language": "bash",
+      "role": "package_inventory_capture",
+      "entry_surface": "direct_shell_script",
+      "structured_output": "partial",
+      "current_contract_markers": [
+        "bash_shebang",
+        "set_euo_pipefail"
+      ],
+      "planned_transition": {
+        "target_surface": "bashly_plus_just",
+        "status": "planned"
+      }
+    },
+    {
+      "asset_id": "gpt_registry.bundle_build",
+      "path": "/home/_404/src/gpt-registry/kernel/project/bundle/build.sh",
+      "repo": "gpt-registry",
+      "language": "bash",
+      "role": "bundle_build",
+      "entry_surface": "direct_shell_script",
+      "structured_output": "partial",
+      "current_contract_markers": [
+        "bash_shebang",
+        "set_euo_pipefail"
+      ],
+      "planned_transition": {
+        "target_surface": "bashly_plus_just",
+        "status": "planned"
+      }
+    }
+  ]
+}
