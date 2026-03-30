@@ -56,5 +56,5 @@ def test_emit_writes_minimal_jsonargparse_project(tmp_path: Path):
     assert report_data["status"] == "source_surfaces_emitted"
     assert report_data["checks"]["parser_python_syntax"]["ok"] is True
     assert report_data["checks"]["pytest_source_python_syntax"]["ok"] is True
-    assert report_data["checks"]["downstream_jsonargparse_runtime"]["status"] in {"ready", "unavailable_in_environment"}
+    assert report_data["checks"]["downstream_jsonargparse_runtime"]["status"] in {"ready", "ready_via_uv", "unavailable_in_environment"}
     assert report_data["checks"]["downstream_pytest"]["status"] in {"ok", "failed", "unavailable_in_environment"}

@@ -5,6 +5,7 @@ import argparse
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -136,6 +137,7 @@ def render_parser_py(command: CliObject, options: list[CliObject], envs: list[Cl
         "from __future__ import annotations",
         "",
         "import json",
+        "import os",
         "from typing import Any",
         "",
         "from jsonargparse import ArgumentParser",
@@ -250,10 +252,26 @@ def check_python_syntax(path: Path) -> dict[str, Any]:
 
 def detect_jsonargparse() -> dict[str, Any]:
     spec = importlib.util.find_spec("jsonargparse")
+    uv_available = shutil.which("uv") is not None
+    if spec is not None:
+        return {
+            "available": True,
+            "module": "jsonargparse",
+            "execution_mode": "current_python_environment",
+            "status": "ready",
+        }
+    if uv_available:
+        return {
+            "available": True,
+            "module": "jsonargparse",
+            "execution_mode": "uv_ephemeral_runtime",
+            "status": "ready_via_uv",
+        }
     return {
-        "available": spec is not None,
+        "available": False,
         "module": "jsonargparse",
-        "status": "ready" if spec is not None else "unavailable_in_environment",
+        "execution_mode": "unavailable",
+        "status": "unavailable_in_environment",
     }
 
 
@@ -263,10 +281,10 @@ def run_pytest(output_root: Path) -> dict[str, Any]:
         return {
             "available": False,
             "status": "unavailable_in_environment",
-            "command": "pytest -q test_control_plane_inspect.py",
+            "command": "uv run --with jsonargparse --with pytest python -m pytest -q test_control_plane_inspect.py",
         }
     result = subprocess.run(
-        ["pytest", "-q", "test_control_plane_inspect.py"],
+        ["uv", "run", "--with", "jsonargparse", "--with", "pytest", "python", "-m", "pytest", "-q", "test_control_plane_inspect.py"],
         cwd=output_root,
         text=True,
         capture_output=True,
@@ -275,7 +293,8 @@ def run_pytest(output_root: Path) -> dict[str, Any]:
     return {
         "available": True,
         "status": "ok" if result.returncode == 0 else "failed",
-        "command": "pytest -q test_control_plane_inspect.py",
+        "command": "uv run --with jsonargparse --with pytest python -m pytest -q test_control_plane_inspect.py",
+        "execution_mode": "uv_ephemeral_runtime",
         "returncode": result.returncode,
         "stdout": result.stdout.strip(),
         "stderr": result.stderr.strip(),
