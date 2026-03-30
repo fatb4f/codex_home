@@ -16,6 +16,8 @@ Files:
 - `canonical_semantic_model.git.example.json`
 - `projection_artifact_manifest.git.example.json`
 - `realization_payload.v1.json`
+- `compatibility_assessment.v1.json`
+- `realization_workflow_contract.v1.md`
 - `gix_target_contract.v1.json`
 - `sem_target_contract.v1.json`
 - `proposal_register.v1.json`
@@ -28,6 +30,8 @@ Current status:
 - target contracts exist at the proposal boundary
 - a first Git-substrate semantic example now exists
 - a first Git-substrate realization payload now exists
+- compatibility posture for `git_substrate_role` now exists
+- a first Git-substrate realization workflow contract now exists
 - implementation and verification runners are intentionally deferred
 
 Direction:

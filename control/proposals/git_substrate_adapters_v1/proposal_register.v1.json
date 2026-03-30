@@ -50,6 +50,16 @@
       "role": "git_substrate_realization_payload"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/compatibility_assessment.v1.json",
+      "kind": "assessment_artifact",
+      "role": "git_substrate_compatibility_assessment"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/realization_workflow_contract.v1.md",
+      "kind": "workflow_contract",
+      "role": "git_substrate_realization_contract"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/gix_target_contract.v1.json",
       "kind": "target_contract",
       "role": "deterministic_git_fact_target"
@@ -83,18 +93,19 @@
       "git_adapter_outputs_remain_projection_only",
       "git_substrate_semantic_example_exists",
       "git_substrate_realization_payload_exists",
+      "git_substrate_compatibility_assessment_exists",
+      "git_substrate_realization_contract_exists",
       "target_contracts_exist_for_gix_and_sem",
       "implementation_is_explicitly_deferred_until_after_contract_review",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
-    "still_required_before_amendment": [
-      "define compatibility and migration posture if a new git_substrate_role namespace is introduced"
-    ]
+    "still_required_before_amendment": []
   },
   "notes": [
     "This proposal opens the Git-substrate lane without implementing adapters prematurely.",
     "gix and sem are projected adapters, not authority surfaces.",
     "A first Git-substrate semantic example and realization payload now exist.",
-    "The next substantive step after this proposal is a Git-substrate realization runner and compatibility posture."
+    "Compatibility posture and realization workflow contract now exist for the first slice.",
+    "The next substantive step after this proposal is implementation of the Git-substrate realization runner."
   ]
 }
