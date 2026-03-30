@@ -9,4 +9,4 @@ These files are intended to be:
 
 Current policy surfaces:
 - `token_burn_and_structured_output.md`
-
+- `token_burn_and_structured_output.registry.json`

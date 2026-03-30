@@ -1,0 +1,87 @@
+{
+  "registry_id": "codex_home.token_burn_and_structured_output",
+  "version": "0.1.0",
+  "scope": "cross_repo_shared_policy",
+  "policy_ref": "control/policy/token_burn_and_structured_output.md",
+  "principles": [
+    "reduce_token_burn_where_practical",
+    "emit_structured_outputs_where_practical",
+    "prefer_stable_wrappers_over_ad_hoc_usage",
+    "keep_shared_control_logic_in_codex_home",
+    "allow_repo_local_overrides_only_with_explicit_local_contract"
+  ],
+  "substrates": [
+    {
+      "substrate_id": "shell",
+      "preferred_surfaces": [
+        {
+          "tool": "bashly",
+          "role": "explicit_cli_wrapper",
+          "structured_output": "preferred"
+        },
+        {
+          "tool": "just",
+          "role": "stable_workflow_verb_layer",
+          "structured_output": "preferred"
+        }
+      ],
+      "rules": [
+        "prefer_explicit_wrappers",
+        "avoid_ad_hoc_shell_as_shared_control_surface",
+        "prefer_structured_output_at_shell_boundary"
+      ]
+    },
+    {
+      "substrate_id": "python",
+      "preferred_surfaces": [
+        {
+          "tool": "marimo",
+          "role": "preferred_python_construction_surface",
+          "structured_output": "preferred",
+          "hydration_role": "may_serve_as_hydratable_registry"
+        }
+      ],
+      "rules": [
+        "prefer_marimo_where_practical",
+        "minimize_free_standing_python_scripts_when_marimo_is_clearer",
+        "marimo_may_hydrate_from_deterministic_wrappers",
+        "marimo_must_not_silently_redefine_wrapper_contracts"
+      ]
+    },
+    {
+      "substrate_id": "git",
+      "preferred_surfaces": [
+        {
+          "tool": "gix",
+          "role": "deterministic_git_fact_surface",
+          "structured_output": "required_where_practical"
+        },
+        {
+          "tool": "sem",
+          "role": "semantic_diff_enrichment_surface",
+          "structured_output": "required_where_practical"
+        }
+      ],
+      "rules": [
+        "prefer_canonical_git_facts_over_output_scraping",
+        "use_semantic_diff_enrichment_when_pattern_requires_more_than_changed_file_truth",
+        "prefer_repo_state_and_diff_state_artifacts_over_conversational_reconstruction",
+        "marimo_may_consume_git_artifacts_as_hydration_layer"
+      ],
+      "reference_notes": [
+        "/home/_404/src/src-ctrl/scratch/token-burn-patterns.md"
+      ]
+    }
+  ],
+  "json_boundary": {
+    "rule": "prefer_canonical_wrappers",
+    "fallback_rule": "make_authoritative_json_actuator_explicit_when_no_narrower_wrapper_exists"
+  },
+  "management_automation": {
+    "rule": "cross_repo_management_setup_should_be_reproducible_from_repo_state",
+    "current_surfaces": [
+      "control/github/bootstrap_control_plane_project.sh",
+      "control/github/control_plane_project_queries.md"
+    ]
+  }
+}
