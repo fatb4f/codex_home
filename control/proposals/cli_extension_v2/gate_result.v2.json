@@ -12,12 +12,14 @@
     "jsonargparse is named as the first Python implementation adapter target",
     "runtime-neutral cli_role-based constraints exist and validate against a dedicated schema",
     "runtime-neutral semantic and projection example artifacts exist",
-    "compatibility assessment classifies the v2 refactor as compatible with migration"
+    "compatibility assessment classifies the v2 refactor as compatible with migration",
+    "a runtime-neutral realization payload exists for adapter-facing follow-on slices",
+    "a realization workflow contract exists for deterministic projection engineering"
   ],
   "underspecified_items": [],
   "next_actions": [
     "decide whether to promote v2 as the neutral super-profile while preserving v1 slices",
-    "define a migration boundary for readers and generators consuming shell_cli_role versus cli_role artifacts"
+    "execute the next adapter-facing slice against the realization payload boundary, likely jsonargparse plus pytest"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }

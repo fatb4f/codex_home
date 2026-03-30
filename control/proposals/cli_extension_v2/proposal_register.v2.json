@@ -81,6 +81,16 @@
       "role": "v2_compatibility_assessment"
     },
     {
+      "ref": "control/proposals/cli_extension_v2/realization_payload.v2.json",
+      "kind": "workflow_artifact",
+      "role": "runtime_neutral_realization_payload"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/realization_workflow_contract.v2.md",
+      "kind": "workflow_contract",
+      "role": "runtime_neutral_realization_contract"
+    },
+    {
       "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
       "kind": "prospect_artifact",
       "role": "projection_generation_orchestration_backend_prospect"
@@ -95,7 +105,9 @@
       "cli_semantics_are_expressible_without_parallel_authority_model",
       "runtime_neutral_constraints_exist",
       "runtime_neutral_examples_exist",
-      "compatibility_assessment_exists"
+      "compatibility_assessment_exists",
+      "realization_payload_exists",
+      "realization_workflow_contract_exists"
     ],
     "still_required_before_amendment": []
   },

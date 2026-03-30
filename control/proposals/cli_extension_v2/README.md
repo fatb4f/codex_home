@@ -25,11 +25,14 @@ Files:
 - `canonical_semantic_model.cli.example.json`
 - `projection_artifact_manifest.cli.example.json`
 - `compatibility_assessment.v2.json`
+- `realization_payload.v2.json`
+- `realization_workflow_contract.v2.md`
 - `hof_prospect.v1.md`
 
 Current status:
 - proposal draft with runtime-neutral constraints, example artifacts, and compatibility assessment
 - portable review basis is vendored locally under `basis/`
+- realization boundary is now defined for adapter-facing follow-on slices
 
 Direction:
 - canonical metadata model remains authority
