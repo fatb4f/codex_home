@@ -42,6 +42,11 @@
       "role": "validated_extension_constraint_example"
     },
     {
+      "ref": "control/proposals/shell_cli_extension/amendment_slice.bashly_bats.v1.json",
+      "kind": "slice_artifact",
+      "role": "first_amendment_facing_slice"
+    },
+    {
       "ref": "control/shell/shell_script_inventory.json",
       "kind": "inventory_artifact",
       "role": "current_projection_baseline"
@@ -73,7 +78,7 @@
       "schema_backed_extension_constraints_exist"
     ],
     "still_required_before_kernel": [
-      "formal projection binding examples for implementation and verification backends"
+      "formal projection binding examples for argc, Argbash, and ShellSpec as follow-on slices"
     ]
   },
   "notes": [

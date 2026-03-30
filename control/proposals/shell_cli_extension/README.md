@@ -9,6 +9,7 @@ Files:
 - `extension_profile.v1.json`
 - `extension_constraints.schema.json`
 - `extension_constraints.example.json`
+- `amendment_slice.bashly_bats.v1.json`
 - `canonical_semantic_model.shell_cli.example.json`
 - `projection_artifact_manifest.shell_cli.example.json`
 
@@ -20,3 +21,4 @@ Direction:
 - shell implementation backends are projection targets
 - shell verification backends are projection consumers
 - shell/CLI extension rules are constrained explicitly without modifying the base metadata schemas
+- first amendment-facing slice is scoped to `Bashly` + `Bats`

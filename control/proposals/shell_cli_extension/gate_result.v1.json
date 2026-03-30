@@ -14,14 +14,15 @@
     "an example canonical semantic model for shell_cli validates against the existing metadata schema",
     "an example projection artifact manifest for shell_cli validates against the existing metadata schema",
     "compatibility assessment classifies the current profile as non-breaking to the base metadata schemas",
-    "schema-backed extension constraints exist and validate"
+    "schema-backed extension constraints exist and validate",
+    "a first amendment-facing slice is defined for Bashly implementation projection and Bats verification projection"
   ],
   "underspecified_items": [
-    "formal projection binding rules beyond the demonstrated Bashly and Bats examples, including argc, Argbash, and ShellSpec"
+    "follow-on backend slices remain for argc, Argbash, and ShellSpec"
   ],
   "next_actions": [
-    "define additional backend projection examples as needed",
-    "prepare amendment-facing artifacts for the metadata lane once backend coverage is sufficient"
+    "carry the Bashly and Bats slice into amendment review",
+    "define additional backend projection examples as separate follow-on slices"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }
