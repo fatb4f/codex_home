@@ -10,3 +10,8 @@ Purpose:
 - inventory current shell automation surfaces
 - declare the shell contract before expanding Bashly/Just coverage
 - keep shell growth deterministic and reviewable
+- align shell surfaces to the earlier metadata model:
+  - rooted sources
+  - semantic objects
+  - projection targets
+  - projected artifacts

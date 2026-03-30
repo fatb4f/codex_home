@@ -3,6 +3,13 @@
   "version": "0.1.0",
   "scope": "managed_workspace_shell_automation_surfaces",
   "root": "/home/_404/src",
+  "root_ref": "root:/home/_404/src",
+  "metadata_model_alignment": {
+    "source_registry_role": "shell_sources_are_rooted_workspace_sources",
+    "canonical_semantic_role": "shell_scripts_are_modeled_as_semantic_objects_of_kind_artifact_target_or_policy_support",
+    "projection_role": "shell_scripts_are_non_authoritative_projection_assets",
+    "projection_manifest_role": "each_shell_asset_should_be_bindable_to_a_projection_target_and_projected_artifact_ref"
+  },
   "exclusions": [
     ".git/**",
     "_notrack/**",
@@ -28,12 +35,21 @@
   "assets": [
     {
       "asset_id": "github.bootstrap_control_plane_project",
+      "object_ref": "object:github_bootstrap_control_plane_project",
+      "projection_target_ref": "target:github_bootstrap_control_plane_project",
+      "projected_artifact_ref": "artifact:github_bootstrap_control_plane_project_sh",
+      "asset_class": "projection",
+      "authority_class": "non_authoritative",
       "path": "control/github/bootstrap_control_plane_project.sh",
       "repo": "codex_home",
       "language": "bash",
       "role": "cross_repo_management_bootstrap",
       "entry_surface": "direct_shell_script",
       "structured_output": "partial",
+      "upstream_contract_refs": [
+        "control/policy/token_burn_and_structured_output.md",
+        "control/policy/token_burn_and_structured_output.registry.json"
+      ],
       "current_contract_markers": [
         "bash_shebang",
         "set_euo_pipefail",
@@ -46,12 +62,21 @@
     },
     {
       "asset_id": "kernel.run_metadata_metaschema_lane",
+      "object_ref": "object:kernel_run_metadata_metaschema_lane",
+      "projection_target_ref": "target:kernel_run_metadata_metaschema_lane",
+      "projected_artifact_ref": "artifact:kernel_run_metadata_metaschema_lane_sh",
+      "asset_class": "projection",
+      "authority_class": "non_authoritative",
       "path": "/home/_404/src/kernel/scripts/run_metadata_metaschema_lane.sh",
       "repo": "kernel",
       "language": "bash",
       "role": "kernel_slice_runner",
       "entry_surface": "direct_shell_script",
       "structured_output": "partial",
+      "upstream_contract_refs": [
+        "/home/_404/src/kernel/policy/contracts/metadata-metaschema-lane.md",
+        "/home/_404/src/kernel/policy/admission/metadata-metaschema-lane.cue"
+      ],
       "current_contract_markers": [
         "bash_shebang",
         "set_euo_pipefail",
@@ -64,12 +89,20 @@
     },
     {
       "asset_id": "kernel.reference_docs_validate",
+      "object_ref": "object:kernel_reference_docs_validate",
+      "projection_target_ref": "target:kernel_reference_docs_validate",
+      "projected_artifact_ref": "artifact:kernel_reference_docs_validate_sh",
+      "asset_class": "projection",
+      "authority_class": "non_authoritative",
       "path": "/home/_404/src/kernel/scripts/reference_docs_validate.sh",
       "repo": "kernel",
       "language": "bash",
       "role": "reference_docs_validation",
       "entry_surface": "direct_shell_script",
       "structured_output": "partial",
+      "upstream_contract_refs": [
+        "/home/_404/src/kernel/scripts/reference_docs_common.sh"
+      ],
       "current_contract_markers": [
         "bash_shebang",
         "set_euo_pipefail"
@@ -81,12 +114,18 @@
     },
     {
       "asset_id": "dotfiles.package_inventory",
+      "object_ref": "object:dotfiles_package_inventory",
+      "projection_target_ref": "target:dotfiles_package_inventory",
+      "projected_artifact_ref": "artifact:dotfiles_package_inventory_sh",
+      "asset_class": "projection",
+      "authority_class": "non_authoritative",
       "path": "/home/_404/src/dotfiles/scripts/package_inventory.sh",
       "repo": "dotfiles",
       "language": "bash",
       "role": "package_inventory_capture",
       "entry_surface": "direct_shell_script",
       "structured_output": "partial",
+      "upstream_contract_refs": [],
       "current_contract_markers": [
         "bash_shebang",
         "set_euo_pipefail"
@@ -98,12 +137,18 @@
     },
     {
       "asset_id": "gpt_registry.bundle_build",
+      "object_ref": "object:gpt_registry_bundle_build",
+      "projection_target_ref": "target:gpt_registry_bundle_build",
+      "projected_artifact_ref": "artifact:gpt_registry_bundle_build_sh",
+      "asset_class": "projection",
+      "authority_class": "non_authoritative",
       "path": "/home/_404/src/gpt-registry/kernel/project/bundle/build.sh",
       "repo": "gpt-registry",
       "language": "bash",
       "role": "bundle_build",
       "entry_surface": "direct_shell_script",
       "structured_output": "partial",
+      "upstream_contract_refs": [],
       "current_contract_markers": [
         "bash_shebang",
         "set_euo_pipefail"
