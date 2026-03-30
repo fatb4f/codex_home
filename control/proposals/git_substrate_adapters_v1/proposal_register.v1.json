@@ -131,6 +131,11 @@
       "role": "git_capability_service_api"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/git_capability_service_workflow_dag.v1.md",
+      "kind": "workflow_artifact",
+      "role": "git_capability_service_workflow_dag"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/emit_gix_runtime.py",
       "kind": "runtime_artifact",
       "role": "deterministic_git_fact_runtime_probe"
@@ -209,6 +214,7 @@
     "gix_real_runtime_path_is_integrated",
     "git_capability_service_policy_exists",
     "git_capability_service_api_contract_exists",
+    "git_capability_service_workflow_dag_exists",
     "shell_and_python_port_inventories_exist",
     "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
@@ -225,6 +231,7 @@
     "sem now has a real local runtime integration path via ataraxy/sem.",
     "gix now has a real local runtime integration path via a repo-local Rust helper crate that uses the gix crate directly.",
     "A policy-enforced Git capability service contract now exists to keep task authorization and risk gating outside the model.",
+    "The service architecture and synced script-migration flow are now captured in a workflow DAG with just treated as the entrypoint module.",
     "Shell and Python port inventories now define the next repo-local migration tranche.",
     "The next substantive step after this proposal is script migration, not more adapter framing."
   ]

@@ -22,6 +22,7 @@
     "gix real runtime integration now exists through a repo-local Rust helper that uses the gix crate directly",
     "the first real-runtime adapter tranche is explicitly closed through adapter_closeout.v1.json",
     "a policy-enforced Git capability service contract exists with task-shaped operations and risk-tier gating",
+    "a workflow DAG exists for the service architecture and synced script-migration flow",
     "shell and Python port inventories now exist for the next migration tranche"
   ],
   "underspecified_items": [],

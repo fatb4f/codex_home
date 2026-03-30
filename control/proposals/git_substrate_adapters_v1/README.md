@@ -32,6 +32,7 @@ Files:
 - `gix_runtime_helper/src/main.rs`
 - `git_capability_service_policy.v1.json`
 - `git_capability_service_api_contract.v1.json`
+- `git_capability_service_workflow_dag.v1.md`
 - `shell_port_inventory.v1.json`
 - `python_port_inventory.v1.json`
 - `proposal_register.v1.json`
@@ -54,6 +55,7 @@ Current status:
 - `gix` now has a real local runtime path through a repo-local Rust helper that uses the `gix` crate directly
 - `gix` and `sem` are closed for this tranche through `adapter_closeout.v1.json`
 - a policy-enforced Git capability service contract now exists for operationalizing the runtime surfaces without exposing a generic Git shell
+- a workflow DAG now exists for the service architecture and synced script-migration flow with `just` as the entrypoint module
 
 Direction:
 - canonical metadata remains authority
