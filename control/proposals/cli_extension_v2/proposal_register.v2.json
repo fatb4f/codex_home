@@ -91,6 +91,16 @@
       "role": "runtime_neutral_realization_contract"
     },
     {
+      "ref": "control/proposals/cli_extension_v2/bashly_target_contract.minimal.v1.json",
+      "kind": "target_contract",
+      "role": "first_bashly_realization_target"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/bashly_target_contract.minimal.v1.md",
+      "kind": "target_contract_companion",
+      "role": "first_bashly_realization_target_human_readable"
+    },
+    {
       "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
       "kind": "prospect_artifact",
       "role": "projection_generation_orchestration_backend_prospect"
@@ -107,13 +117,15 @@
       "runtime_neutral_examples_exist",
       "compatibility_assessment_exists",
       "realization_payload_exists",
-      "realization_workflow_contract_exists"
+      "realization_workflow_contract_exists",
+      "first_bashly_realization_target_is_wired"
     ],
     "still_required_before_amendment": []
   },
   "notes": [
     "This v2 proposal is a forward refactor and does not invalidate the shell-first approved packet slice.",
     "The existing metadata model remains the sole authority baseline.",
-    "Basis artifacts required for portable review are vendored under control/proposals/cli_extension_v2/basis."
+    "Basis artifacts required for portable review are vendored under control/proposals/cli_extension_v2/basis.",
+    "The first concrete Bashly target is deliberately constrained to the upstream minimal example so transform work can start from the smallest truthful Bashly source tree."
   ]
 }

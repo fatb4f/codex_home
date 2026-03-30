@@ -27,15 +27,19 @@ Files:
 - `compatibility_assessment.v2.json`
 - `realization_payload.v2.json`
 - `realization_workflow_contract.v2.md`
+- `bashly_target_contract.minimal.v1.json`
+- `bashly_target_contract.minimal.v1.md`
 - `hof_prospect.v1.md`
 
 Current status:
 - proposal draft with runtime-neutral constraints, example artifacts, and compatibility assessment
 - portable review basis is vendored locally under `basis/`
 - realization boundary is now defined for adapter-facing follow-on slices
+- the first concrete Bashly realization target is now wired to the upstream `examples/minimal` shape
 
 Direction:
 - canonical metadata model remains authority
 - runtime assets remain projection-only
 - shell and Python adapters become runtime families under one CLI profile
+- the first Bashly adapter slice is intentionally bounded to `src/bashly.yml` plus `src/root_command.sh`
 - `hof` is tracked as a projection-generation-orchestration prospect, not a runtime adapter
