@@ -54,6 +54,11 @@
       "ref": "control/proposals/cli_extension_v2/extension_profile.v2.json",
       "kind": "profile_artifact",
       "role": "runtime_neutral_cli_profile"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
+      "kind": "prospect_artifact",
+      "role": "projection_generation_orchestration_backend_prospect"
     }
   ],
   "gate_expectations": {

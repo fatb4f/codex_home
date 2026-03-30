@@ -14,6 +14,7 @@ Files:
 - `proposal_register.v2.json`
 - `gate_result.v2.json`
 - `extension_profile.v2.json`
+- `hof_prospect.v1.md`
 
 Current status:
 - proposal draft for runtime-neutral refactor
@@ -22,3 +23,4 @@ Direction:
 - canonical metadata model remains authority
 - runtime assets remain projection-only
 - shell and Python adapters become runtime families under one CLI profile
+- `hof` is tracked as a projection-generation-orchestration prospect, not a runtime adapter
