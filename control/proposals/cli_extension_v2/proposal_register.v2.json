@@ -56,6 +56,31 @@
       "role": "runtime_neutral_cli_profile"
     },
     {
+      "ref": "control/proposals/cli_extension_v2/extension_constraints.v2.json",
+      "kind": "constraint_artifact",
+      "role": "runtime_neutral_constraint_layer"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/extension_constraints.v2.schema.json",
+      "kind": "schema_artifact",
+      "role": "runtime_neutral_constraint_schema"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/canonical_semantic_model.cli.example.json",
+      "kind": "example_artifact",
+      "role": "runtime_neutral_semantic_example"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/projection_artifact_manifest.cli.example.json",
+      "kind": "example_artifact",
+      "role": "runtime_neutral_projection_manifest_example"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/compatibility_assessment.v2.json",
+      "kind": "assessment_artifact",
+      "role": "v2_compatibility_assessment"
+    },
+    {
       "ref": "control/proposals/cli_extension_v2/hof_prospect.v1.md",
       "kind": "prospect_artifact",
       "role": "projection_generation_orchestration_backend_prospect"
@@ -67,13 +92,12 @@
       "runtime_assets_remain_projection_only",
       "implementation_backends_are_classified_by_runtime_family",
       "verification_backends_are_classified_by_runtime_family",
-      "cli_semantics_are_expressible_without_parallel_authority_model"
+      "cli_semantics_are_expressible_without_parallel_authority_model",
+      "runtime_neutral_constraints_exist",
+      "runtime_neutral_examples_exist",
+      "compatibility_assessment_exists"
     ],
-    "still_required_before_amendment": [
-      "runtime-neutral schema-backed extension constraints",
-      "runtime-neutral example artifacts",
-      "compatibility assessment for the v2 refactor"
-    ]
+    "still_required_before_amendment": []
   },
   "notes": [
     "This v2 proposal is a forward refactor and does not invalidate the shell-first approved packet slice.",

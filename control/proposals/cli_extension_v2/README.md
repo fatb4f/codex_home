@@ -14,10 +14,15 @@ Files:
 - `proposal_register.v2.json`
 - `gate_result.v2.json`
 - `extension_profile.v2.json`
+- `extension_constraints.v2.json`
+- `extension_constraints.v2.schema.json`
+- `canonical_semantic_model.cli.example.json`
+- `projection_artifact_manifest.cli.example.json`
+- `compatibility_assessment.v2.json`
 - `hof_prospect.v1.md`
 
 Current status:
-- proposal draft for runtime-neutral refactor
+- proposal draft with runtime-neutral constraints, example artifacts, and compatibility assessment
 
 Direction:
 - canonical metadata model remains authority

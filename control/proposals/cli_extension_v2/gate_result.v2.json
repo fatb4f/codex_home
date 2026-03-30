@@ -3,24 +3,21 @@
   "artifact_version": "v2",
   "proposal_id": "cli-extension-profile-v2",
   "gate_status": "conditional_pass_with_underspecification",
-  "result_summary": "The runtime-neutral v2 direction is coherent and preserves the existing metadata authority baseline while generalizing the shell-first profile toward shell and Python adapter families. It remains at proposal register because the constraint layer, examples, and compatibility classification are not yet migrated to the runtime-neutral form.",
+  "result_summary": "The runtime-neutral v2 direction is coherent and preserves the existing metadata authority baseline while generalizing the shell-first profile toward shell and Python adapter families. It is now backed by runtime-neutral constraints, example artifacts, and a compatibility assessment, and is ready to move beyond the proposal register toward amendment review.",
   "passes": [
     "existing metadata model remains the authority baseline",
     "runtime assets are classified as projection-only",
     "shell and Python implementation adapters are separated by runtime family",
     "shell and Python verification consumers are separated by runtime family",
-    "jsonargparse is named as the first Python implementation adapter target"
+    "jsonargparse is named as the first Python implementation adapter target",
+    "runtime-neutral cli_role-based constraints exist and validate against a dedicated schema",
+    "runtime-neutral semantic and projection example artifacts exist",
+    "compatibility assessment classifies the v2 refactor as compatible with migration"
   ],
-  "underspecified_items": [
-    "runtime-neutral schema-backed extension constraints",
-    "runtime-neutral example canonical semantic model",
-    "runtime-neutral projection manifest example",
-    "compatibility classification for the v2 refactor"
-  ],
+  "underspecified_items": [],
   "next_actions": [
-    "define cli_role-based extension constraints",
-    "add runtime-neutral example artifacts",
-    "classify compatibility impact for the v2 refactor"
+    "decide whether to promote v2 as the neutral super-profile while preserving v1 slices",
+    "define a migration boundary for readers and generators consuming shell_cli_role versus cli_role artifacts"
   ],
-  "promotion_decision": "hold_at_proposal_register"
+  "promotion_decision": "ready_for_amendment_review"
 }
