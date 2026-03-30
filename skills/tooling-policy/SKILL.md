@@ -20,6 +20,7 @@ Use this skill when a task touches authority boundaries between discussion packe
 
 ## Rules
 
+- `codex_home` owns shared cross-repo control policy, token-burn reduction policy, and deterministic operator-surface guidance unless an explicit narrower authority overrides it.
 - `proposal_register` is the only promotion gate for new contract families.
 - `specify-proposal` is the ingress/meta-skill for proposal normalization and gating.
 - Whenever a workflow crosses a JSON boundary, `json-tool` is the authoritative actuator unless a narrower canonical wrapper already exists.
@@ -27,6 +28,7 @@ Use this skill when a task touches authority boundaries between discussion packe
 - `discussions/*` are non-authoritative working docs and evidence packets.
 - `spawn` owns runtime execution, worker dispatch, and system-impacting lifecycle control after proposal gating passes.
 - Do not introduce ad hoc direct tool usage where an approved wrapper or official skill already exists.
+- Prefer structured outputs wherever practical so shared workflows do not depend on prose-only interpretation.
 
 ## Decision tests
 
@@ -52,3 +54,4 @@ When applying this skill, produce a concise authority decision:
 - subordinate tool/skill
 - promotion path, if any
 - non-authoritative working area, if any
+- whether structured output is required or strongly preferred at the workflow boundary

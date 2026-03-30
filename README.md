@@ -10,6 +10,7 @@ Ownership boundary:
 Scope:
 - skills
 - control workflows
+- shared control policy
 - prompt registry
 - schemas
 - Codex-facing policy and orchestration assets
