@@ -15,7 +15,8 @@
     "an example projection artifact manifest for shell_cli validates against the existing metadata schema",
     "compatibility assessment classifies the current profile as non-breaking to the base metadata schemas",
     "schema-backed extension constraints exist and validate",
-    "a first amendment-facing slice is defined for Bashly implementation projection and Bats verification projection"
+    "a first amendment-facing slice is defined for Bashly implementation projection and Bats verification projection",
+    "Bashly is reduced to adapter primitives, required config surfaces, and matrixed mappings against the metadata profile"
   ],
   "underspecified_items": [
     "follow-on backend slices remain for argc, Argbash, and ShellSpec"
