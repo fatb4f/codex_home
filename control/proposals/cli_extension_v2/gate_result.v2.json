@@ -16,12 +16,14 @@
     "a runtime-neutral realization payload exists for adapter-facing follow-on slices",
     "a realization workflow contract exists for deterministic projection engineering",
     "the first concrete Bashly target is wired to the upstream minimal example",
-    "the first Bashly minimal transform emits deterministic source surfaces and is covered by local tests"
+    "the first Bashly minimal transform emits deterministic source surfaces and is covered by local tests",
+    "the first jsonargparse minimal transform emits deterministic source surfaces and is covered by local tests"
   ],
   "underspecified_items": [],
   "next_actions": [
     "decide whether to promote the Bashly source emitter into a broader realization runner or keep it as a bounded slice tool",
-    "execute the next adapter-facing slice against the realization payload boundary, likely jsonargparse plus pytest"
+    "install jsonargparse if runtime execution of the emitted Python slice is required in this environment",
+    "decide whether to fold the Bashly and jsonargparse bounded emitters into a broader control realize cli-extension-v2 runner"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }
