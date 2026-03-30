@@ -1,0 +1,85 @@
+{
+  "artifact_type": "spec_draft",
+  "artifact_version": "v1",
+  "proposal_id": "git-substrate-adapters-v1",
+  "title": "Git Substrate Adapters V1",
+  "status": "draft",
+  "summary": "Defines the proposal boundary for Git-substrate projected adapters so deterministic Git-state and semantic-diff surfaces can be realized without elevating adapter outputs into authority.",
+  "source_inputs": [
+    {
+      "ref": "control/policy/token_burn_and_structured_output.registry.json",
+      "kind": "policy_source",
+      "role": "git_substrate_policy_basis"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/realization_workflow_contract.v2.md",
+      "kind": "workflow_source",
+      "role": "normalized_realization_pattern"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_manifest.v2.schema.json",
+      "kind": "schema_source",
+      "role": "normalized_manifest_contract"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_report.v2.schema.json",
+      "kind": "schema_source",
+      "role": "normalized_report_contract"
+    }
+  ],
+  "normalized_shape": {
+    "authoritative_base_model": "canonical_semantic_model.schema.json",
+    "binding_surface": "projection_artifact_manifest.schema.json",
+    "extension_style": "git_substrate_adapter_contracts",
+    "new_parallel_authority_model": false
+  },
+  "core_model": {
+    "design_rules": [
+      "git_adapter_outputs_are_projection_artifacts",
+      "deterministic_git_facts_precede_semantic_enrichment",
+      "repo_state_and_diff_state_should_be_emitted_as_structured_artifacts",
+      "semantic_diff_enrichment_must_not_replace_canonical_git_facts",
+      "implementation_should_reuse_existing_realization_pattern"
+    ],
+    "intended_semantic_coverage": [
+      "repo_state_surface",
+      "diff_state_surface",
+      "ref_state_surface",
+      "semantic_diff_surface",
+      "review_basis_surface"
+    ],
+    "target_projection_backends": {
+      "git_implementation": [
+        "gix",
+        "sem"
+      ],
+      "git_hydration_consumers": [
+        "marimo"
+      ]
+    }
+  },
+  "open_items": [
+    {
+      "id": "open-001",
+      "title": "Git semantic profile",
+      "detail": "The canonical object and relation profile for Git-state and semantic-diff surfaces is not yet specified."
+    },
+    {
+      "id": "open-002",
+      "title": "Realization payload",
+      "detail": "A Git-substrate realization payload has not yet been defined against the normalized realization pattern."
+    }
+  ],
+  "resolved_items": [
+    {
+      "id": "resolved-001",
+      "title": "Authority location",
+      "detail": "The existing metadata model remains the sole authority baseline; gix and sem outputs are projection artifacts only."
+    },
+    {
+      "id": "resolved-002",
+      "title": "Adapter classification",
+      "detail": "gix is the deterministic Git fact surface and sem is the semantic diff enrichment surface."
+    }
+  ]
+}

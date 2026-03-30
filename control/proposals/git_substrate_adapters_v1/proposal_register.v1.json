@@ -1,0 +1,84 @@
+{
+  "artifact_type": "proposal_register",
+  "artifact_version": "v1",
+  "proposal_id": "git-substrate-adapters-v1",
+  "status": "under_review",
+  "promotion_gate": "proposal_register",
+  "proposal_class": "git_substrate_adapter_contracts",
+  "scope": {
+    "in_scope": [
+      "Git-substrate projected adapter classification for gix and sem",
+      "target contracts for deterministic Git fact capture and semantic diff enrichment",
+      "reuse of the normalized realization pattern from cli_extension_v2"
+    ],
+    "out_of_scope": [
+      "implementation of gix",
+      "implementation of sem",
+      "Git-substrate realization runner",
+      "hydration notebook realization"
+    ]
+  },
+  "artifacts": [
+    {
+      "ref": "control/policy/token_burn_and_structured_output.registry.json",
+      "kind": "policy_artifact",
+      "role": "git_substrate_policy_basis"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/spec_draft.v1.json",
+      "kind": "spec_artifact",
+      "role": "git_substrate_spec_draft"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/extension_profile.v1.json",
+      "kind": "profile_artifact",
+      "role": "git_substrate_adapter_profile"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/gix_target_contract.v1.json",
+      "kind": "target_contract",
+      "role": "deterministic_git_fact_target"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/sem_target_contract.v1.json",
+      "kind": "target_contract",
+      "role": "semantic_diff_enrichment_target"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/realization_workflow_contract.v2.md",
+      "kind": "workflow_artifact",
+      "role": "normalized_realization_pattern"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_manifest.v2.schema.json",
+      "kind": "schema_artifact",
+      "role": "normalized_manifest_contract"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/unified_realization_report.v2.schema.json",
+      "kind": "schema_artifact",
+      "role": "normalized_report_contract"
+    }
+  ],
+  "gate_expectations": {
+    "required_for_promotion": [
+      "canonical_metadata_remains_authority",
+      "gix_is_classified_as_deterministic_git_fact_surface",
+      "sem_is_classified_as_semantic_diff_enrichment_surface",
+      "git_adapter_outputs_remain_projection_only",
+      "target_contracts_exist_for_gix_and_sem",
+      "implementation_is_explicitly_deferred_until_after_contract_review",
+      "normalized_realization_pattern_is_named_as_the_reuse_path"
+    ],
+    "still_required_before_amendment": [
+      "define a Git-substrate semantic example",
+      "define a Git-substrate realization payload",
+      "define compatibility and migration posture if a new git_substrate_role namespace is introduced"
+    ]
+  },
+  "notes": [
+    "This proposal opens the Git-substrate lane without implementing adapters prematurely.",
+    "gix and sem are projected adapters, not authority surfaces.",
+    "The next substantive step after this proposal is a Git-substrate semantic example plus realization payload."
+  ]
+}
