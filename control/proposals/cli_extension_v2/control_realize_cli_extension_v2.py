@@ -6,6 +6,7 @@ import json
 import shutil
 import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +36,15 @@ PRIMARY_OPERATOR_SURFACE = "control_realize_cli_extension_v2.py"
 
 class RealizationError(Exception):
     pass
+
+
+@dataclass(frozen=True)
+class CliObject:
+    ref: str
+    object_kind: str
+    title: str
+    summary: str
+    attributes: dict[str, Any]
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -134,6 +144,57 @@ def validate_payload(cwd: Path, payload: dict[str, Any]) -> tuple[dict[str, Any]
     return model, object_refs
 
 
+def normalize_objects(model: dict[str, Any]) -> dict[str, CliObject]:
+    objects: dict[str, CliObject] = {}
+    for raw in model.get("objects", []):
+        require_keys(raw, ["ref", "object_kind", "title", "summary", "attributes"], "object")
+        ref = str(raw["ref"])
+        objects[ref] = CliObject(
+            ref=ref,
+            object_kind=str(raw["object_kind"]),
+            title=str(raw["title"]),
+            summary=str(raw["summary"]),
+            attributes=dict(raw["attributes"]),
+        )
+    return objects
+
+
+def target_input_objects(target: dict[str, Any], objects: dict[str, CliObject]) -> list[CliObject]:
+    return [objects[str(ref)] for ref in target["inputs"]]
+
+
+def cli_name_from_objects(target_objects: list[CliObject]) -> str:
+    for obj in target_objects:
+        if obj.attributes.get("cli_role") == "command_surface":
+            command_path = obj.attributes.get("command_path")
+            if isinstance(command_path, list) and command_path:
+                return "-".join(str(part) for part in command_path)
+    raise RealizationError("unable to resolve command_surface for verification projection")
+
+
+def preferred_formats_from_objects(target_objects: list[CliObject]) -> list[str]:
+    for obj in target_objects:
+        role = obj.attributes.get("cli_role")
+        if role == "output_contract":
+            formats = obj.attributes.get("preferred_formats")
+            if isinstance(formats, list) and formats:
+                return [str(x) for x in formats]
+        if role == "parameter_surface" and obj.attributes.get("long_flag") == "--format":
+            choices = obj.attributes.get("choices")
+            if isinstance(choices, list) and choices:
+                return [str(x) for x in choices]
+    return ["json"]
+
+
+def env_name_from_objects(target_objects: list[CliObject]) -> str | None:
+    for obj in target_objects:
+        if obj.attributes.get("cli_role") == "environment_binding":
+            env_name = obj.attributes.get("env_name")
+            if env_name:
+                return str(env_name)
+    return None
+
+
 def run_child(cwd: Path, script_name: str, output_root: Path) -> dict[str, Any]:
     result = subprocess.run(
         [sys.executable, str(cwd / script_name), "--output-root", str(output_root)],
@@ -194,30 +255,130 @@ def validate_unified_document(document: dict[str, Any], schema: dict[str, Any], 
                     raise RealizationError(f"{ctx}.{key} missing required key: {nested_key}")
 
 
-def render_bats_suite(script_relpath: str) -> str:
-    return (
-        "#!/usr/bin/env bats\n"
-        "\n"
-        "setup() {\n"
-        f"  SCRIPT=\"{script_relpath}\"\n"
-        "}\n"
-        "\n"
-        "@test \"help path works\" {\n"
-        "  run \"$SCRIPT\" --help\n"
-        "  [ \"$status\" -eq 0 ]\n"
-        "}\n"
-        "\n"
-        "@test \"success path emits json\" {\n"
-        "  run \"$SCRIPT\" --format json\n"
-        "  [ \"$status\" -eq 0 ]\n"
-        "  [[ \"$output\" == *'\"kind\":\"control_plane_inspect\"'* ]]\n"
-        "}\n"
-        "\n"
-        "@test \"invalid format fails\" {\n"
-        "  run \"$SCRIPT\" --format toml\n"
-        "  [ \"$status\" -ne 0 ]\n"
-        "}\n"
+def render_bats_suite(script_relpath: str, formats: list[str]) -> str:
+    preferred = formats[0] if formats else "json"
+    alt = formats[1] if len(formats) > 1 else None
+    lines = [
+        "#!/usr/bin/env bats",
+        "",
+        "setup() {",
+        f"  SCRIPT=\"{script_relpath}\"",
+        "}",
+        "",
+        "@test \"help path works\" {",
+        "  run \"$SCRIPT\" --help",
+        "  [ \"$status\" -eq 0 ]",
+        "}",
+        "",
+        f"@test \"success path emits {preferred}\" {{",
+        f"  run \"$SCRIPT\" --format {preferred}",
+        "  [ \"$status\" -eq 0 ]",
+        "  [[ \"$output\" == *'kind'* ]]",
+        "}",
+        "",
+    ]
+    if alt is not None:
+        lines.extend(
+            [
+                f"@test \"alternate format emits {alt}\" {{",
+                f"  run \"$SCRIPT\" --format {alt}",
+                "  [ \"$status\" -eq 0 ]",
+                "  [[ \"$output\" == *'kind'* ]]",
+                "}",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "@test \"invalid format fails\" {",
+            "  run \"$SCRIPT\" --format toml",
+            "  [ \"$status\" -ne 0 ]",
+            "}",
+            "",
+        ]
     )
+    return "\n".join(lines)
+
+
+def render_pytest_suite(
+    parser_relpath: str,
+    cli_name: str,
+    formats: list[str],
+    env_name: str | None,
+) -> str:
+    preferred = formats[0] if formats else "json"
+    alt = formats[1] if len(formats) > 1 else None
+    lines = [
+        "from __future__ import annotations",
+        "",
+        "import os",
+        "import subprocess",
+        "import sys",
+        "from pathlib import Path",
+        "",
+        "",
+        "ROOT = Path(__file__).resolve().parent",
+        f"PARSER = ROOT / {parser_relpath!r}",
+        "",
+        "",
+        "def run(*args: str, env: dict[str, str] | None = None):",
+        "    merged_env = os.environ.copy()",
+        "    if env is not None:",
+        "        merged_env.update(env)",
+        "    return subprocess.run(",
+        "        [sys.executable, str(PARSER), *args],",
+        "        cwd=ROOT,",
+        "        text=True,",
+        "        capture_output=True,",
+        "        check=False,",
+        "        env=merged_env,",
+        "    )",
+        "",
+        "",
+        "def test_help_path():",
+        "    result = run('--help')",
+        "    assert result.returncode == 0",
+        f"    assert {cli_name!r} in result.stdout",
+        "",
+        "",
+        f"def test_success_path_{preferred}():",
+        f"    result = run('--format', '{preferred}')",
+        "    assert result.returncode == 0",
+        "    assert 'kind' in result.stdout",
+        "",
+        "",
+    ]
+    if alt is not None:
+        lines.extend(
+            [
+                f"def test_success_path_{alt}():",
+                f"    result = run('--format', '{alt}')",
+                "    assert result.returncode == 0",
+                "    assert 'kind' in result.stdout",
+                "",
+                "",
+            ]
+        )
+    if env_name is not None:
+        lines.extend(
+            [
+                "def test_environment_binding_round_trips():",
+                f"    result = run('--format', '{preferred}', env={{'{env_name}': 'dev'}})",
+                "    assert result.returncode == 0",
+                "    assert 'dev' in result.stdout",
+                "",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "def test_invalid_value_path():",
+            "    result = run('--format', 'toml')",
+            "    assert result.returncode != 0",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def write_text(path: Path, content: str) -> None:
@@ -296,7 +457,8 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         payload = load_json(payload_path)
-        _model, _object_refs = validate_payload(cwd, payload)
+        model, _object_refs = validate_payload(cwd, payload)
+        objects = normalize_objects(model)
 
         if args.check_only:
             print(json.dumps({"status": "ok", "validated_targets": len(payload["targets"])}, indent=2))
@@ -351,9 +513,21 @@ def main(argv: list[str] | None = None) -> int:
                     }
                 )
             elif backend == "pytest":
-                src = jsonargparse_project_root / "test_control_plane_inspect.py"
                 dest = root / repo_path
-                copy_file(src, dest)
+                verification_objects = target_input_objects(target, objects)
+                implementation_objects = target_input_objects(payload["targets"][1], objects)
+                env_name = env_name_from_objects(implementation_objects)
+                formats = preferred_formats_from_objects(implementation_objects)
+                parser_relpath = "../../python/control_plane_inspect/parser.py"
+                write_text(
+                    dest,
+                    render_pytest_suite(
+                        parser_relpath=parser_relpath,
+                        cli_name=cli_name_from_objects(verification_objects + implementation_objects),
+                        formats=formats,
+                        env_name=env_name,
+                    ),
+                )
                 emitted.append(
                     {
                         "target_id": target_id,
@@ -371,7 +545,10 @@ def main(argv: list[str] | None = None) -> int:
             elif backend == "bats":
                 dest = root / repo_path
                 script_relpath = "../../bashly/control_plane_inspect/control-plane-inspect"
-                write_text(dest, render_bats_suite(script_relpath))
+                verification_objects = target_input_objects(target, objects)
+                implementation_objects = target_input_objects(payload["targets"][0], objects)
+                formats = preferred_formats_from_objects(implementation_objects)
+                write_text(dest, render_bats_suite(script_relpath, formats))
                 emitted.append(
                     {
                         "target_id": target_id,

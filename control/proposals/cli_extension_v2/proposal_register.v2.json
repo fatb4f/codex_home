@@ -189,6 +189,7 @@
     "The first jsonargparse emitter currently realizes source surfaces and reports runtime availability honestly when jsonargparse is not installed in the environment.",
     "The broader realization runner now orchestrates the bounded Bashly and jsonargparse slices and emits a unified build tree plus aggregate manifest/report.",
     "The bounded emitters are internal projection surfaces; the unified realization runner is the primary operator surface for this lane.",
-    "The unified runner owns the Bats and pytest verification projections rather than exposing them as separate authority surfaces."
+    "The unified runner owns the Bats and pytest verification projections rather than exposing them as separate authority surfaces.",
+    "The unified verification projections are now synthesized from canonical verification and output semantics instead of being copied from child-emitter test sources."
   ]
 }

@@ -22,12 +22,13 @@
     "the unified realization runner is explicitly the primary operator surface for this lane",
     "the bounded emitters are treated as internal projection surfaces rather than operator authority",
     "the unified realization manifest and report contracts now exist as explicit schema artifacts",
-    "verification projections are emitted under runner ownership rather than as separate operator surfaces"
+    "verification projections are emitted under runner ownership rather than as separate operator surfaces",
+    "runner-owned verification projections are synthesized from canonical verification semantics instead of copied from child-emitter test sources"
   ],
   "underspecified_items": [],
   "next_actions": [
     "promote the unified manifest/report schemas into the next amendment-facing realization packet when this lane is packetized again",
-    "extend the same runner with richer contract-driven verification generation beyond the current minimal Bats/pytest projections"
+    "open the Git-substrate adapter-contract lane for gix and sem on top of the now-stabilized realization pattern"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }

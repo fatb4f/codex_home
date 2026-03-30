@@ -46,6 +46,15 @@ def test_realize_emits_unified_projection_tree(tmp_path: Path):
     assert manifest.exists()
     assert report.exists()
 
+    bats_text = bats_file.read_text(encoding="utf-8")
+    assert '@test "alternate format emits yaml"' in bats_text
+    assert '--format toml' in bats_text
+
+    pytest_text = pytest_file.read_text(encoding="utf-8")
+    assert "PARSER = ROOT / '../../python/control_plane_inspect/parser.py'" in pytest_text
+    assert "def test_environment_binding_round_trips()" in pytest_text
+    assert "CONTROL_PLANE_PROFILE" in pytest_text
+
     manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
     assert manifest_data["document_type"] == "realization_manifest"
     assert manifest_data["schema_version"] == "v2"

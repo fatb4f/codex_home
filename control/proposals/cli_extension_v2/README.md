@@ -50,6 +50,7 @@ Current status:
 - the first concrete jsonargparse minimal target and emitter now exist for the Python implementation lane
 - the broader realization runner now orchestrates both bounded implementation slices and emits the unified build tree
 - the broader realization runner now owns the unified manifest/report contract and the verification-consumer projection outputs
+- the broader realization runner now synthesizes the Bats and pytest verification projections from canonical verification and output semantics instead of copying child-emitter test sources
 
 Direction:
 - canonical metadata model remains authority
@@ -60,5 +61,5 @@ Direction:
 - downstream `bashly generate` remains a distinct second-stage build and is reported honestly when unavailable in the environment
 - the canonical runner is `control_realize_cli_extension_v2.py` and is now the primary operator surface for this lane
 - bounded emitters remain internal projection surfaces under the unified runner
-- the unified runner owns the normalized realization manifest/report contract and emits runner-owned Bats/pytest verification projections
+- the unified runner owns the normalized realization manifest/report contract and emits runner-owned Bats/pytest verification projections derived from canonical verification semantics
 - `hof` is tracked as a projection-generation-orchestration prospect, not a runtime adapter
