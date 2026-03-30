@@ -281,10 +281,10 @@ def run_pytest(output_root: Path) -> dict[str, Any]:
         return {
             "available": False,
             "status": "unavailable_in_environment",
-            "command": "uv run --with jsonargparse --with pytest python -m pytest -q test_control_plane_inspect.py",
+            "command": "uv run --with jsonargparse --with pytest python -m pytest -p no:cacheprovider -q test_control_plane_inspect.py",
         }
     result = subprocess.run(
-        ["uv", "run", "--with", "jsonargparse", "--with", "pytest", "python", "-m", "pytest", "-q", "test_control_plane_inspect.py"],
+        ["uv", "run", "--with", "jsonargparse", "--with", "pytest", "python", "-m", "pytest", "-p", "no:cacheprovider", "-q", "test_control_plane_inspect.py"],
         cwd=output_root,
         text=True,
         capture_output=True,
@@ -293,7 +293,7 @@ def run_pytest(output_root: Path) -> dict[str, Any]:
     return {
         "available": True,
         "status": "ok" if result.returncode == 0 else "failed",
-        "command": "uv run --with jsonargparse --with pytest python -m pytest -q test_control_plane_inspect.py",
+        "command": "uv run --with jsonargparse --with pytest python -m pytest -p no:cacheprovider -q test_control_plane_inspect.py",
         "execution_mode": "uv_ephemeral_runtime",
         "returncode": result.returncode,
         "stdout": result.stdout.strip(),

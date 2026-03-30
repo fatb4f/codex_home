@@ -35,6 +35,8 @@ Files:
 - `jsonargparse_target_contract.minimal.v1.md`
 - `emit_jsonargparse_minimal.py`
 - `test_emit_jsonargparse_minimal.py`
+- `control_realize_cli_extension_v2.py`
+- `test_control_realize_cli_extension_v2.py`
 - `hof_prospect.v1.md`
 
 Current status:
@@ -44,6 +46,7 @@ Current status:
 - the first concrete Bashly realization target is now wired to the upstream `examples/minimal` shape
 - the first concrete Bashly minimal emitter now exists and emits `src/bashly.yml` plus `src/root_command.sh`
 - the first concrete jsonargparse minimal target and emitter now exist for the Python implementation lane
+- the broader realization runner now orchestrates both bounded implementation slices and emits the unified build tree
 
 Direction:
 - canonical metadata model remains authority
@@ -52,4 +55,5 @@ Direction:
 - the first Bashly adapter slice is intentionally bounded to `src/bashly.yml` plus `src/root_command.sh`
 - the first jsonargparse adapter slice is intentionally bounded to `parser.py` plus `test_control_plane_inspect.py`
 - downstream `bashly generate` remains a distinct second-stage build and is reported honestly when unavailable in the environment
+- the canonical runner is `control_realize_cli_extension_v2.py` and aggregates bounded emitter outputs into one realization manifest/report
 - `hof` is tracked as a projection-generation-orchestration prospect, not a runtime adapter

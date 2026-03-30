@@ -1,0 +1,344 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ALLOWED_FAMILIES = {
+    "shell_implementation",
+    "python_implementation",
+    "shell_verification",
+    "python_verification",
+}
+
+ALLOWED_BACKENDS = {
+    "bashly": "shell_implementation",
+    "jsonargparse": "python_implementation",
+    "bats": "shell_verification",
+    "pytest": "python_verification",
+}
+
+ALLOWED_ARTIFACT_KINDS = {
+    "config_projection",
+    "codegen_input",
+    "verification_projection",
+}
+
+
+class RealizationError(Exception):
+    pass
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError as exc:
+        raise RealizationError(f"missing JSON artifact: {path}") from exc
+    except json.JSONDecodeError as exc:
+        raise RealizationError(f"invalid JSON in {path}: {exc}") from exc
+
+
+def require_keys(obj: dict[str, Any], keys: list[str], ctx: str) -> None:
+    missing = [key for key in keys if key not in obj]
+    if missing:
+        raise RealizationError(f"{ctx} missing required keys: {', '.join(missing)}")
+
+
+def resolve_artifact_ref(cwd: Path, ref: str) -> Path:
+    if not ref.startswith("artifact:"):
+        raise RealizationError(f"unsupported authority ref: {ref}")
+    return cwd / ref.removeprefix("artifact:")
+
+
+def validate_payload(cwd: Path, payload: dict[str, Any]) -> tuple[dict[str, Any], set[str]]:
+    require_keys(payload, ["authority_inputs", "realization_scope", "targets", "workflow"], "payload")
+
+    authority_inputs = payload["authority_inputs"]
+    require_keys(
+        authority_inputs,
+        ["canonical_model_ref", "constraint_ref", "profile_ref", "projection_manifest_ref"],
+        "authority_inputs",
+    )
+    for key, ref in authority_inputs.items():
+        path = resolve_artifact_ref(cwd, ref)
+        if not path.exists():
+            raise RealizationError(f"{key} does not resolve locally: {ref}")
+
+    model = load_json(resolve_artifact_ref(cwd, authority_inputs["canonical_model_ref"]))
+    object_refs = {str(obj["ref"]) for obj in model.get("objects", [])}
+
+    scope = payload["realization_scope"]
+    require_keys(scope, ["allowed_adapter_families", "allowed_backends"], "realization_scope")
+    allowed_families = set(scope["allowed_adapter_families"])
+    allowed_backends = set(scope["allowed_backends"])
+
+    unknown_families = allowed_families - ALLOWED_FAMILIES
+    if unknown_families:
+        raise RealizationError(f"unknown adapter families: {sorted(unknown_families)}")
+    unknown_backends = allowed_backends - set(ALLOWED_BACKENDS)
+    if unknown_backends:
+        raise RealizationError(f"unknown backends: {sorted(unknown_backends)}")
+
+    seen_ids: set[str] = set()
+    for target in payload["targets"]:
+        require_keys(
+            target,
+            ["target_id", "backend", "adapter_family", "projection_role", "inputs", "artifact_kind", "repo_path"],
+            "target",
+        )
+        target_id = str(target["target_id"])
+        if target_id in seen_ids:
+            raise RealizationError(f"duplicate target_id: {target_id}")
+        seen_ids.add(target_id)
+        backend = str(target["backend"])
+        family = str(target["adapter_family"])
+        if backend not in allowed_backends:
+            raise RealizationError(f"target {target_id}: backend '{backend}' not enabled")
+        if family not in allowed_families:
+            raise RealizationError(f"target {target_id}: adapter_family '{family}' not enabled")
+        if ALLOWED_BACKENDS[backend] != family:
+            raise RealizationError(
+                f"target {target_id}: backend '{backend}' does not match adapter_family '{family}'"
+            )
+        artifact_kind = str(target["artifact_kind"])
+        if artifact_kind not in ALLOWED_ARTIFACT_KINDS:
+            raise RealizationError(f"target {target_id}: unsupported artifact_kind '{artifact_kind}'")
+        inputs = [str(x) for x in target["inputs"]]
+        if not inputs:
+            raise RealizationError(f"target {target_id}: inputs must not be empty")
+        missing_inputs = sorted(set(inputs) - object_refs)
+        if missing_inputs:
+            raise RealizationError(
+                f"target {target_id}: unresolved semantic inputs: {', '.join(missing_inputs)}"
+            )
+
+    workflow = payload["workflow"]
+    require_keys(workflow, ["command", "deterministic", "overwrite_policy", "manifest_update"], "workflow")
+    if workflow["command"] != "control realize cli-extension-v2":
+        raise RealizationError("workflow.command must be exactly 'control realize cli-extension-v2'")
+    if workflow["deterministic"] is not True:
+        raise RealizationError("workflow.deterministic must be true")
+
+    return model, object_refs
+
+
+def run_child(cwd: Path, script_name: str, output_root: Path) -> dict[str, Any]:
+    result = subprocess.run(
+        [sys.executable, str(cwd / script_name), "--output-root", str(output_root)],
+        cwd=cwd,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RealizationError(f"{script_name} failed: {result.stderr.strip()}")
+    return json.loads(result.stdout)
+
+
+def read_child_report(path: Path) -> dict[str, Any]:
+    return load_json(path)
+
+
+def render_bats_suite(script_relpath: str) -> str:
+    return (
+        "#!/usr/bin/env bats\n"
+        "\n"
+        "setup() {\n"
+        f"  SCRIPT=\"{script_relpath}\"\n"
+        "}\n"
+        "\n"
+        "@test \"help path works\" {\n"
+        "  run \"$SCRIPT\" --help\n"
+        "  [ \"$status\" -eq 0 ]\n"
+        "}\n"
+        "\n"
+        "@test \"success path emits json\" {\n"
+        "  run \"$SCRIPT\" --format json\n"
+        "  [ \"$status\" -eq 0 ]\n"
+        "  [[ \"$output\" == *'\"kind\":\"control_plane_inspect\"'* ]]\n"
+        "}\n"
+        "\n"
+        "@test \"invalid format fails\" {\n"
+        "  run \"$SCRIPT\" --format toml\n"
+        "  [ \"$status\" -ne 0 ]\n"
+        "}\n"
+    )
+
+
+def write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8")
+
+
+def copy_file(src: Path, dest: Path) -> None:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+
+
+def build_unified_manifest(
+    root: Path,
+    payload: dict[str, Any],
+    emitted: list[dict[str, Any]],
+) -> Path:
+    path = root / "build" / "realization_manifest.json"
+    manifest = {
+        "document_type": "realization_manifest",
+        "workflow_command": payload["workflow"]["command"],
+        "deterministic": payload["workflow"]["deterministic"],
+        "targets": emitted,
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def build_unified_report(
+    root: Path,
+    payload_path: Path,
+    emitted: list[dict[str, Any]],
+    backend_reports: dict[str, Any],
+) -> Path:
+    path = root / "build" / "realization_report.json"
+    report = {
+        "document_type": "realization_report",
+        "status": "success",
+        "payload_path": str(payload_path),
+        "realized_count": len(emitted),
+        "targets": emitted,
+        "backend_reports": backend_reports,
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="control realize cli-extension-v2",
+        description="Unified realization runner for the Bashly and jsonargparse bounded slices.",
+    )
+    parser.add_argument("--payload", default="realization_payload.v2.json")
+    parser.add_argument("--root", default=".")
+    parser.add_argument("--check-only", action="store_true")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv or sys.argv[1:])
+    cwd = Path(__file__).resolve().parent
+    payload_path = (cwd / args.payload).resolve() if not Path(args.payload).is_absolute() else Path(args.payload)
+    root = Path(args.root).resolve()
+
+    try:
+        payload = load_json(payload_path)
+        _model, _object_refs = validate_payload(cwd, payload)
+
+        if args.check_only:
+            print(json.dumps({"status": "ok", "validated_targets": len(payload["targets"])}, indent=2))
+            return 0
+
+        bashly_project_root = root / "build" / "bashly" / "control_plane_inspect"
+        jsonargparse_project_root = root / "build" / "python" / "control_plane_inspect"
+
+        bashly_run = run_child(cwd, "emit_bashly_minimal.py", bashly_project_root)
+        jsonargparse_run = run_child(cwd, "emit_jsonargparse_minimal.py", jsonargparse_project_root)
+
+        bashly_report = read_child_report(Path(bashly_run["report"]))
+        jsonargparse_report = read_child_report(Path(jsonargparse_run["report"]))
+
+        emitted: list[dict[str, Any]] = []
+        for target in payload["targets"]:
+            target_id = str(target["target_id"])
+            backend = str(target["backend"])
+            artifact_kind = str(target["artifact_kind"])
+            repo_path = str(target["repo_path"])
+
+            if backend == "bashly":
+                actual = bashly_project_root / "src" / "bashly.yml"
+                emitted.append(
+                    {
+                        "target_id": target_id,
+                        "backend": backend,
+                        "artifact_kind": artifact_kind,
+                        "repo_path": repo_path,
+                        "output_path": str(actual),
+                        "source_project_root": str(bashly_project_root),
+                    }
+                )
+            elif backend == "jsonargparse":
+                actual = jsonargparse_project_root / "parser.py"
+                emitted.append(
+                    {
+                        "target_id": target_id,
+                        "backend": backend,
+                        "artifact_kind": artifact_kind,
+                        "repo_path": repo_path,
+                        "output_path": str(actual),
+                        "source_project_root": str(jsonargparse_project_root),
+                    }
+                )
+            elif backend == "pytest":
+                src = jsonargparse_project_root / "test_control_plane_inspect.py"
+                dest = root / repo_path
+                copy_file(src, dest)
+                emitted.append(
+                    {
+                        "target_id": target_id,
+                        "backend": backend,
+                        "artifact_kind": artifact_kind,
+                        "repo_path": repo_path,
+                        "output_path": str(dest),
+                        "source_project_root": str(jsonargparse_project_root),
+                    }
+                )
+            elif backend == "bats":
+                dest = root / repo_path
+                script_relpath = "../../bashly/control_plane_inspect/control-plane-inspect"
+                write_text(dest, render_bats_suite(script_relpath))
+                emitted.append(
+                    {
+                        "target_id": target_id,
+                        "backend": backend,
+                        "artifact_kind": artifact_kind,
+                        "repo_path": repo_path,
+                        "output_path": str(dest),
+                        "source_project_root": str(bashly_project_root),
+                    }
+                )
+
+        manifest_path = build_unified_manifest(root, payload, emitted)
+        report_path = build_unified_report(
+            root,
+            payload_path,
+            emitted,
+            {
+                "bashly": bashly_report,
+                "jsonargparse": jsonargparse_report,
+            },
+        )
+
+        print(
+            json.dumps(
+                {
+                    "status": "success",
+                    "realized_targets": len(emitted),
+                    "manifest": str(manifest_path),
+                    "report": str(report_path),
+                },
+                indent=2,
+            )
+        )
+        return 0
+    except RealizationError as exc:
+        print(json.dumps({"status": "error", "message": str(exc)}, indent=2), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
