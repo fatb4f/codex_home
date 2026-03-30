@@ -82,6 +82,29 @@
     "current_surfaces": [
       "control/github/bootstrap_control_plane_project.sh",
       "control/github/control_plane_project_queries.md"
+    ],
+    "token_burn_examples": [
+      {
+        "example_id": "packet_review_basis_drift_requires_reissue",
+        "anti_pattern": "An agent or operator must rediscover from scattered packet artifacts that a repaired approval basis requires packet.review.decision.json to be reissued.",
+        "why_it_is_token_burn": [
+          "the required next action is mechanically derivable from packet state",
+          "approval_basis_fingerprint, review decision presence, and gate state already exist as structured artifacts",
+          "conversational restatement of the repair step repeats work that the workflow state should surface directly"
+        ],
+        "required_remediation_pattern": [
+          "emit a deterministic packet-state artifact or wrapper result",
+          "surface current approval basis fingerprint",
+          "surface whether review decision is present, stale, or current",
+          "surface required next action such as reissue_packet_review_decision",
+          "keep the remediation output structured and consumable by wrappers, notebooks, and automation"
+        ],
+        "preferred_outputs": [
+          "packet_state.json",
+          "stable wrapper output",
+          "hydration-friendly registry/view surface"
+        ]
+      }
     ]
   }
 }
