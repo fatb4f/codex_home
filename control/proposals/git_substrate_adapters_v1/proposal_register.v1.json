@@ -9,12 +9,13 @@
     "in_scope": [
       "Git-substrate projected adapter classification for gix and sem",
       "target contracts for deterministic Git fact capture and semantic diff enrichment",
-      "reuse of the normalized realization pattern from cli_extension_v2"
+      "reuse of the normalized realization pattern from cli_extension_v2",
+      "runtime-contract definition for real gix and sem execution",
+      "inventory of shell and Python script migration candidates"
     ],
     "out_of_scope": [
-      "implementation of gix",
-      "implementation of sem",
-      "Git-substrate realization runner",
+      "production-grade implementation of gix",
+      "production-grade implementation of sem",
       "hydration notebook realization"
     ]
   },
@@ -105,6 +106,26 @@
       "role": "semantic_diff_enrichment_target"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/gix_runtime_contract.v1.json",
+      "kind": "runtime_contract",
+      "role": "deterministic_git_fact_runtime_contract"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/sem_runtime_contract.v1.json",
+      "kind": "runtime_contract",
+      "role": "semantic_diff_enrichment_runtime_contract"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/shell_port_inventory.v1.json",
+      "kind": "inventory_artifact",
+      "role": "shell_port_inventory"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/python_port_inventory.v1.json",
+      "kind": "inventory_artifact",
+      "role": "python_port_inventory"
+    },
+    {
       "ref": "control/proposals/cli_extension_v2/realization_workflow_contract.v2.md",
       "kind": "workflow_artifact",
       "role": "normalized_realization_pattern"
@@ -133,6 +154,8 @@
       "git_substrate_realization_runner_exists",
       "git_substrate_transforms_are_split_into_gix_and_sem_projection_surfaces",
       "target_contracts_exist_for_gix_and_sem",
+      "runtime_contracts_exist_for_gix_and_sem",
+      "shell_and_python_port_inventories_exist",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
     "still_required_before_amendment": []
@@ -144,6 +167,8 @@
     "Compatibility posture and realization workflow contract now exist for the first slice.",
     "A first Git-substrate realization runner now exists and emits normalized manifest/report artifacts.",
     "Runner-owned Git transform logic is now split into bounded gix and sem emitter artifacts.",
-    "The next substantive step after this proposal is to promote the first realization packet."
+    "Real-runtime contracts for gix and sem now distinguish the pending adapter integration work from the minimal proof path.",
+    "Shell and Python port inventories now define the next repo-local migration tranche.",
+    "The next substantive step after this proposal is real adapter integration and script migration, not more proposal framing."
   ]
 }

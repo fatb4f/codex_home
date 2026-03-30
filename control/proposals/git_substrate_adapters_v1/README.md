@@ -27,6 +27,10 @@ Files:
 - `test_emit_sem_minimal.py`
 - `gix_target_contract.v1.json`
 - `sem_target_contract.v1.json`
+- `gix_runtime_contract.v1.json`
+- `sem_runtime_contract.v1.json`
+- `shell_port_inventory.v1.json`
+- `python_port_inventory.v1.json`
 - `proposal_register.v1.json`
 - `gate_result.v1.json`
 
@@ -41,6 +45,8 @@ Current status:
 - a first Git-substrate realization workflow contract now exists
 - a first Git-substrate realization runner now exists and emits normalized manifest/report artifacts
 - the runner-owned Git transform logic is now split into narrower `gix` and `sem` projection emitters
+- real-runtime contracts for `gix` and `sem` are now explicit
+- first shell and Python port inventories now exist for the repo-local scripts
 
 Direction:
 - canonical metadata remains authority
@@ -50,3 +56,5 @@ Direction:
 - implementation reuses the normalized realization pattern already established in `cli_extension_v2`
 - the unified runner remains the primary operator surface and owns aggregation plus normalized manifest/report emission
 - `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner
+- runtime contracts now separate minimal projection proof from real adapter integration work
+- port inventories now separate real operator-entrypoint migration candidates from projection internals

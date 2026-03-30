@@ -3,7 +3,7 @@
   "artifact_version": "v1",
   "proposal_id": "git-substrate-adapters-v1",
   "gate_status": "pass",
-  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear, target contracts for gix and sem exist, and the lane now has a semantic example, realization payload, compatibility posture, realization workflow contract, and a first runner that emits normalized manifest/report artifacts.",
+  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear, target contracts and runtime contracts for gix and sem now exist, the lane has a semantic example plus realization contract, and the next migration work is grounded by explicit shell and Python port inventories.",
   "passes": [
     "existing metadata remains the authority baseline",
     "gix is classified as the deterministic Git fact surface",
@@ -16,13 +16,15 @@
     "a compatibility assessment exists for git_substrate_role and the new target kinds",
     "a Git-substrate realization workflow contract exists for the first slice",
     "a Git-substrate realization runner exists and emits normalized manifest/report artifacts",
-    "the Git transform logic is split into bounded gix and sem emitter surfaces under the runner"
+    "the Git transform logic is split into bounded gix and sem emitter surfaces under the runner",
+    "real-runtime contracts now exist for gix and sem",
+    "shell and Python port inventories now exist for the next migration tranche"
   ],
   "underspecified_items": [],
   "next_actions": [
-    "open the amendment-facing packet for the first Git-substrate realization slice",
-    "carry the split gix and sem transform surfaces into the realization packet basis",
-    "only after that, widen the Git-substrate lane beyond the first codex_home example"
+    "implement real gix runtime integration against the new pyo3/maturin runtime contract",
+    "implement real sem runtime integration downstream of deterministic diff capture",
+    "start migrating the highest-priority shell and Python entrypoints from the new port inventories"
   ],
-  "promotion_decision": "ready_for_amendment_review"
+  "promotion_decision": "ready_for_runtime_integration"
 }

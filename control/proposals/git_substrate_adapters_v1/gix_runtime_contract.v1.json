@@ -1,0 +1,70 @@
+{
+  "artifact_type": "runtime_contract",
+  "artifact_version": "v1",
+  "runtime_id": "gix_runtime_contract",
+  "backend": "gix",
+  "status": "planned",
+  "purpose": "Define the first real adapter execution contract for deterministic Git fact capture beyond the current minimal projection emitter.",
+  "build_contract": {
+    "implementation_language": "python_extension",
+    "build_backend": "maturin",
+    "ffi_surface": "pyo3",
+    "toolchain_requirements": [
+      "python >= 3.11",
+      "rust toolchain",
+      "maturin",
+      "pyo3-compatible build environment"
+    ],
+    "notes": [
+      "gix is not treated as a pure Python script dependency.",
+      "The runtime contract assumes a build/install step distinct from projection authoring."
+    ]
+  },
+  "execution_contract": {
+    "invocation_modes": [
+      "project-local virtualenv invocation",
+      "uv-managed ephemeral runtime if the build surface is exposed into Python",
+      "prebuilt wheel installation"
+    ],
+    "required_inputs": [
+      "repository_ref",
+      "comparison_ref"
+    ],
+    "required_outputs": [
+      "repo_state.json",
+      "diff_state.json"
+    ],
+    "output_invariants": [
+      "repository identity is explicit",
+      "HEAD and branch/ref state are explicit",
+      "diff output names the comparison ref",
+      "output shape is deterministic for unchanged Git state"
+    ]
+  },
+  "validation_contract": {
+    "required_checks": [
+      "runtime availability is explicit in the realization report",
+      "repo_state emission succeeds against codex_home",
+      "diff_state emission succeeds against an explicit comparison ref",
+      "deterministic replay on unchanged state produces identical outputs"
+    ],
+    "failure_modes_to_surface": [
+      "missing Rust or maturin toolchain",
+      "pyo3 build failure",
+      "repository ref does not resolve",
+      "comparison ref does not resolve"
+    ]
+  },
+  "promotion_boundary": {
+    "allowed_now": [
+      "runtime contract definition",
+      "real-runtime verification plan",
+      "report fields that distinguish minimal from real execution"
+    ],
+    "not_yet_allowed": [
+      "claiming real gix integration complete without a built runtime",
+      "promoting gix output to authority",
+      "hiding build/runtime failures behind minimal emitters"
+    ]
+  }
+}
