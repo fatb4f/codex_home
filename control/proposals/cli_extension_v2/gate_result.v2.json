@@ -1,0 +1,26 @@
+{
+  "artifact_type": "proposal_gate_result",
+  "artifact_version": "v2",
+  "proposal_id": "cli-extension-profile-v2",
+  "gate_status": "conditional_pass_with_underspecification",
+  "result_summary": "The runtime-neutral v2 direction is coherent and preserves the existing metadata authority baseline while generalizing the shell-first profile toward shell and Python adapter families. It remains at proposal register because the constraint layer, examples, and compatibility classification are not yet migrated to the runtime-neutral form.",
+  "passes": [
+    "existing metadata model remains the authority baseline",
+    "runtime assets are classified as projection-only",
+    "shell and Python implementation adapters are separated by runtime family",
+    "shell and Python verification consumers are separated by runtime family",
+    "jsonargparse is named as the first Python implementation adapter target"
+  ],
+  "underspecified_items": [
+    "runtime-neutral schema-backed extension constraints",
+    "runtime-neutral example canonical semantic model",
+    "runtime-neutral projection manifest example",
+    "compatibility classification for the v2 refactor"
+  ],
+  "next_actions": [
+    "define cli_role-based extension constraints",
+    "add runtime-neutral example artifacts",
+    "classify compatibility impact for the v2 refactor"
+  ],
+  "promotion_decision": "hold_at_proposal_register"
+}

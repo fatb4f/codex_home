@@ -1,0 +1,77 @@
+{
+  "artifact_type": "proposal_register",
+  "artifact_version": "v2",
+  "proposal_id": "cli-extension-profile-v2",
+  "status": "under_review",
+  "promotion_gate": "proposal_register",
+  "proposal_class": "metadata_extension_profile_refactor",
+  "scope": {
+    "in_scope": [
+      "runtime-neutral CLI semantic extension profile over the existing metadata model",
+      "runtime-neutral role namespace using cli_role",
+      "runtime-family projection-target classification for shell and Python implementation backends",
+      "runtime-family projection-consumer classification for shell and Python verification backends"
+    ],
+    "out_of_scope": [
+      "rewriting the approved Bashly+Bats first amendment slice",
+      "kernel amendment in this v2 draft",
+      "Python implementation rollout",
+      "pytest rollout"
+    ]
+  },
+  "artifacts": [
+    {
+      "ref": "/home/_404/Downloads/metadata/canonical_semantic_model.schema.json",
+      "kind": "schema_artifact",
+      "role": "authoritative_base_model"
+    },
+    {
+      "ref": "/home/_404/Downloads/metadata/projection_artifact_manifest.schema.json",
+      "kind": "schema_artifact",
+      "role": "projection_binding_contract"
+    },
+    {
+      "ref": "control/proposals/shell_cli_extension/extension_profile.v1.json",
+      "kind": "profile_artifact",
+      "role": "v1_shell_first_basis"
+    },
+    {
+      "ref": "control/proposals/shell_cli_extension/jsonargparse_projection_matrix.v1.json",
+      "kind": "adapter_artifact",
+      "role": "python_adapter_basis"
+    },
+    {
+      "ref": "control/proposals/shell_cli_extension/python_cli_prospect.v1.md",
+      "kind": "prospect_artifact",
+      "role": "python_cli_generalization_basis"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/spec_draft.v2.json",
+      "kind": "spec_artifact",
+      "role": "v2_spec_draft"
+    },
+    {
+      "ref": "control/proposals/cli_extension_v2/extension_profile.v2.json",
+      "kind": "profile_artifact",
+      "role": "runtime_neutral_cli_profile"
+    }
+  ],
+  "gate_expectations": {
+    "required_for_promotion": [
+      "cli_profile_extends_existing_metadata_model",
+      "runtime_assets_remain_projection_only",
+      "implementation_backends_are_classified_by_runtime_family",
+      "verification_backends_are_classified_by_runtime_family",
+      "cli_semantics_are_expressible_without_parallel_authority_model"
+    ],
+    "still_required_before_amendment": [
+      "runtime-neutral schema-backed extension constraints",
+      "runtime-neutral example artifacts",
+      "compatibility assessment for the v2 refactor"
+    ]
+  },
+  "notes": [
+    "This v2 proposal is a forward refactor and does not invalidate the shell-first approved packet slice.",
+    "The existing metadata model remains the sole authority baseline."
+  ]
+}
