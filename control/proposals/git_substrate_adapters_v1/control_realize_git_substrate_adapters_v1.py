@@ -5,78 +5,23 @@ import argparse
 import json
 import subprocess
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from git_projection_common import GitObject, GitProjectionError, load_json, normalize_objects, parse_repository_ref, require_keys
 
-ALLOWED_FAMILIES = {
-    "git_implementation",
-    "git_hydration",
-}
 
-ALLOWED_BACKENDS = {
-    "gix": "git_implementation",
-    "sem": "git_implementation",
-    "marimo": "git_hydration",
-}
-
-ALLOWED_ARTIFACT_KINDS = {
-    "state_projection",
-    "enrichment_projection",
-    "hydration_projection",
-}
-
+ALLOWED_FAMILIES = {"git_implementation", "git_hydration"}
+ALLOWED_BACKENDS = {"gix": "git_implementation", "sem": "git_implementation", "marimo": "git_hydration"}
+ALLOWED_ARTIFACT_KINDS = {"state_projection", "enrichment_projection", "hydration_projection"}
 PRIMARY_OPERATOR_SURFACE = "control_realize_git_substrate_adapters_v1.py"
-
-
-class RealizationError(Exception):
-    pass
-
-
-@dataclass(frozen=True)
-class GitObject:
-    ref: str
-    object_kind: str
-    title: str
-    summary: str
-    attributes: dict[str, Any]
-
-
-def load_json(path: Path) -> dict[str, Any]:
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:
-        raise RealizationError(f"missing JSON artifact: {path}") from exc
-    except json.JSONDecodeError as exc:
-        raise RealizationError(f"invalid JSON in {path}: {exc}") from exc
-
-
-def require_keys(obj: dict[str, Any], keys: list[str], ctx: str) -> None:
-    missing = [key for key in keys if key not in obj]
-    if missing:
-        raise RealizationError(f"{ctx} missing required keys: {', '.join(missing)}")
+RealizationError = GitProjectionError
 
 
 def resolve_artifact_ref(cwd: Path, ref: str) -> Path:
     if not ref.startswith("artifact:"):
         raise RealizationError(f"unsupported authority ref: {ref}")
     return cwd / ref.removeprefix("artifact:")
-
-
-def normalize_objects(model: dict[str, Any]) -> dict[str, GitObject]:
-    objects: dict[str, GitObject] = {}
-    for raw in model.get("objects", []):
-        require_keys(raw, ["ref", "object_kind", "title", "summary", "attributes"], "object")
-        ref = str(raw["ref"])
-        objects[ref] = GitObject(
-            ref=ref,
-            object_kind=str(raw["object_kind"]),
-            title=str(raw["title"]),
-            summary=str(raw["summary"]),
-            attributes=dict(raw["attributes"]),
-        )
-    return objects
 
 
 def validate_unified_document(document: dict[str, Any], schema: dict[str, Any], ctx: str) -> None:
@@ -120,103 +65,6 @@ def validate_unified_document(document: dict[str, Any], schema: dict[str, Any], 
                     raise RealizationError(f"{ctx}.{key} missing required key: {nested_key}")
 
 
-def git_run(repo: Path, *args: str) -> str:
-    result = subprocess.run(
-        ["git", "-C", str(repo), *args],
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise RealizationError(f"git command failed ({' '.join(args)}): {result.stderr.strip()}")
-    return result.stdout
-
-
-def parse_repository_ref(repo_ref: str) -> Path:
-    if not repo_ref.startswith("repo:"):
-        raise RealizationError(f"unsupported repository_ref: {repo_ref}")
-    return Path(repo_ref.removeprefix("repo:"))
-
-
-def emit_repo_state(obj: GitObject) -> dict[str, Any]:
-    repo = parse_repository_ref(str(obj.attributes["repository_ref"]))
-    head = git_run(repo, "rev-parse", "HEAD").strip()
-    branch = git_run(repo, "rev-parse", "--abbrev-ref", "HEAD").strip()
-    status_lines = [line for line in git_run(repo, "status", "--porcelain").splitlines() if line.strip()]
-    return {
-        "document_type": "repo_state",
-        "repository_path": str(repo),
-        "head": head,
-        "branch": branch,
-        "clean": len(status_lines) == 0,
-        "status_entries": status_lines,
-        "state_kind": obj.attributes["state_kind"],
-    }
-
-
-def emit_diff_state(obj: GitObject) -> dict[str, Any]:
-    repo = parse_repository_ref(str(obj.attributes["repository_ref"]))
-    comparison_ref = str(obj.attributes["comparison_ref"])
-    base_ref = git_run(repo, "merge-base", "HEAD", comparison_ref).strip()
-    head = git_run(repo, "rev-parse", "HEAD").strip()
-    raw_name_status = git_run(repo, "diff", "--name-status", f"{base_ref}..{head}")
-    changed_files: list[dict[str, Any]] = []
-    for line in raw_name_status.splitlines():
-        parts = line.split("\t")
-        if len(parts) >= 2:
-            changed_files.append({"status": parts[0], "path": parts[-1]})
-    raw_numstat = git_run(repo, "diff", "--numstat", f"{base_ref}..{head}")
-    numstat: list[dict[str, Any]] = []
-    for line in raw_numstat.splitlines():
-        parts = line.split("\t")
-        if len(parts) == 3:
-            numstat.append({"added": parts[0], "deleted": parts[1], "path": parts[2]})
-    return {
-        "document_type": "diff_state",
-        "repository_path": str(repo),
-        "comparison_ref": comparison_ref,
-        "comparison_base": base_ref,
-        "head": head,
-        "changed_files": changed_files,
-        "file_count": len(changed_files),
-        "numstat": numstat,
-        "state_kind": obj.attributes["state_kind"],
-    }
-
-
-def emit_semantic_diff(semantic_obj: GitObject, review_obj: GitObject, diff_state: dict[str, Any]) -> dict[str, Any]:
-    changed_files = diff_state["changed_files"]
-    by_status: dict[str, int] = {}
-    by_extension: dict[str, int] = {}
-    for item in changed_files:
-        status = str(item["status"])
-        path = str(item["path"])
-        by_status[status] = by_status.get(status, 0) + 1
-        ext = Path(path).suffix or "<none>"
-        by_extension[ext] = by_extension.get(ext, 0) + 1
-    return {
-        "document_type": "semantic_diff",
-        "repository_path": semantic_obj.attributes["repository_ref"],
-        "upstream_diff_ref": semantic_obj.attributes["upstream_diff_ref"],
-        "review_basis_rule": review_obj.attributes["basis_rule"],
-        "change_summary": {
-            "file_count": diff_state["file_count"],
-            "by_status": by_status,
-            "by_extension": by_extension,
-        },
-        "review_basis": {
-            "requires_repo_state_and_diff_state": True,
-            "comparison_ref": diff_state["comparison_ref"],
-            "comparison_base": diff_state["comparison_base"],
-        },
-    }
-
-
-def write_json(path: Path, data: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-
-
 def build_manifest(root: Path, payload: dict[str, Any], emitted: list[dict[str, Any]], cwd: Path) -> Path:
     manifest = {
         "document_type": "realization_manifest",
@@ -229,7 +77,8 @@ def build_manifest(root: Path, payload: dict[str, Any], emitted: list[dict[str, 
     schema = load_json(cwd.parent / "cli_extension_v2" / "unified_realization_manifest.v2.schema.json")
     validate_unified_document(manifest, schema, "realization_manifest")
     path = root / "build" / "realization_manifest.json"
-    write_json(path, manifest)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return path
 
 
@@ -253,8 +102,22 @@ def build_report(
     schema = load_json(cwd.parent / "cli_extension_v2" / "unified_realization_report.v2.schema.json")
     validate_unified_document(report, schema, "realization_report")
     path = root / "build" / "realization_report.json"
-    write_json(path, report)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return path
+
+
+def run_child(cwd: Path, script_name: str, output_root: Path) -> dict[str, Any]:
+    result = subprocess.run(
+        [sys.executable, str(cwd / script_name), "--output-root", str(output_root)],
+        cwd=cwd,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RealizationError(f"{script_name} failed: {result.stderr.strip()}")
+    return json.loads(result.stdout)
 
 
 def validate_payload(cwd: Path, payload: dict[str, Any]) -> tuple[dict[str, GitObject], dict[str, Any]]:
@@ -357,8 +220,12 @@ def main(argv: list[str] | None = None) -> int:
 
         emitted: list[dict[str, Any]] = []
         backend_reports: dict[str, Any] = {"gix": {"targets": []}, "sem": {"targets": []}}
-        repo_state_doc: dict[str, Any] | None = None
-        diff_state_doc: dict[str, Any] | None = None
+        gix_root = root / "build" / "git" / "codex_home"
+        sem_root = root / "build" / "git" / "codex_home"
+        gix_run = run_child(cwd, "emit_gix_minimal.py", gix_root)
+        sem_run = run_child(cwd, "emit_sem_minimal.py", sem_root)
+        gix_report = load_json(Path(gix_run["report"]))
+        sem_report = load_json(Path(sem_run["report"]))
 
         for target in payload["targets"]:
             backend = str(target["backend"])
@@ -369,13 +236,13 @@ def main(argv: list[str] | None = None) -> int:
             if backend == "gix":
                 surface = input_objects[0]
                 role = str(surface.attributes.get("git_substrate_role"))
-                if role == "repo_state_surface":
-                    repo_state_doc = emit_repo_state(surface)
-                    write_json(output_path, repo_state_doc)
-                    backend_reports["gix"]["targets"].append({"target_id": target_id, "status": "ok", "kind": role})
-                elif role == "diff_state_surface":
-                    diff_state_doc = emit_diff_state(surface)
-                    write_json(output_path, diff_state_doc)
+                source_name = "repo_state.json" if role == "repo_state_surface" else "diff_state.json"
+                source_path = gix_root / source_name
+                if not source_path.exists():
+                    raise RealizationError(f"target {target_id}: expected gix output missing: {source_path}")
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                output_path.write_text(source_path.read_text(encoding="utf-8"), encoding="utf-8")
+                if role in {"repo_state_surface", "diff_state_surface"}:
                     backend_reports["gix"]["targets"].append({"target_id": target_id, "status": "ok", "kind": role})
                 else:
                     raise RealizationError(f"target {target_id}: unsupported gix role {role!r}")
@@ -394,15 +261,12 @@ def main(argv: list[str] | None = None) -> int:
                     }
                 )
             elif backend == "sem":
-                if diff_state_doc is None:
-                    diff_source = next(
-                        obj for obj in objects.values() if obj.attributes.get("git_substrate_role") == "diff_state_surface"
-                    )
-                    diff_state_doc = emit_diff_state(diff_source)
                 semantic_obj = next(obj for obj in input_objects if obj.attributes.get("git_substrate_role") == "semantic_diff_surface")
-                review_obj = next(obj for obj in input_objects if obj.attributes.get("git_substrate_role") == "review_basis_surface")
-                semantic_diff_doc = emit_semantic_diff(semantic_obj, review_obj, diff_state_doc)
-                write_json(output_path, semantic_diff_doc)
+                source_path = sem_root / "semantic_diff.json"
+                if not source_path.exists():
+                    raise RealizationError(f"target {target_id}: expected sem output missing: {source_path}")
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+                output_path.write_text(source_path.read_text(encoding="utf-8"), encoding="utf-8")
                 backend_reports["sem"]["targets"].append({"target_id": target_id, "status": "ok", "kind": "semantic_diff_surface"})
                 emitted.append(
                     {
@@ -419,6 +283,9 @@ def main(argv: list[str] | None = None) -> int:
                         "generated_by": PRIMARY_OPERATOR_SURFACE,
                     }
                 )
+
+        backend_reports["gix"]["emitter_report"] = gix_report
+        backend_reports["sem"]["emitter_report"] = sem_report
 
         manifest_path = build_manifest(root, payload, emitted, cwd)
         report_path = build_report(root, payload_path, emitted, backend_reports, cwd)

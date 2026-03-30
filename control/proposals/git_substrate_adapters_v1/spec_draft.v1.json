@@ -105,6 +105,11 @@
       "id": "resolved-007",
       "title": "Realization runner",
       "detail": "A first Git-substrate realization runner now exists and emits repo_state, diff_state, semantic_diff, plus normalized manifest/report artifacts."
+    },
+    {
+      "id": "resolved-008",
+      "title": "Narrower transform surfaces",
+      "detail": "The runner-owned Git transforms have been split into bounded gix and sem emitter artifacts while keeping the unified runner as the primary operator surface."
     }
   ]
 }

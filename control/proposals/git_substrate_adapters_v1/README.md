@@ -20,6 +20,11 @@ Files:
 - `realization_workflow_contract.v1.md`
 - `control_realize_git_substrate_adapters_v1.py`
 - `test_control_realize_git_substrate_adapters_v1.py`
+- `git_projection_common.py`
+- `emit_gix_minimal.py`
+- `test_emit_gix_minimal.py`
+- `emit_sem_minimal.py`
+- `test_emit_sem_minimal.py`
 - `gix_target_contract.v1.json`
 - `sem_target_contract.v1.json`
 - `proposal_register.v1.json`
@@ -35,6 +40,7 @@ Current status:
 - compatibility posture for `git_substrate_role` now exists
 - a first Git-substrate realization workflow contract now exists
 - a first Git-substrate realization runner now exists and emits normalized manifest/report artifacts
+- the runner-owned Git transform logic is now split into narrower `gix` and `sem` projection emitters
 
 Direction:
 - canonical metadata remains authority
@@ -42,3 +48,5 @@ Direction:
 - Git adapter outputs are structured operational artifacts, not authority
 - `gix` and `sem` are projected adapters over the Git substrate
 - implementation reuses the normalized realization pattern already established in `cli_extension_v2`
+- the unified runner remains the primary operator surface and owns aggregation plus normalized manifest/report emission
+- `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner

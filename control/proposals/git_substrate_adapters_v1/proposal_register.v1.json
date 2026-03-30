@@ -62,12 +62,37 @@
     {
       "ref": "control/proposals/git_substrate_adapters_v1/control_realize_git_substrate_adapters_v1.py",
       "kind": "workflow_artifact",
-      "role": "git_substrate_realization_runner"
+      "role": "git_substrate_primary_operator_surface"
     },
     {
       "ref": "control/proposals/git_substrate_adapters_v1/test_control_realize_git_substrate_adapters_v1.py",
       "kind": "verification_artifact",
       "role": "git_substrate_realization_runner_tests"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/git_projection_common.py",
+      "kind": "implementation_artifact",
+      "role": "git_projection_shared_helpers"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/emit_gix_minimal.py",
+      "kind": "transform_artifact",
+      "role": "deterministic_git_fact_transform"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/test_emit_gix_minimal.py",
+      "kind": "verification_artifact",
+      "role": "deterministic_git_fact_transform_tests"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/emit_sem_minimal.py",
+      "kind": "transform_artifact",
+      "role": "semantic_diff_enrichment_transform"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/test_emit_sem_minimal.py",
+      "kind": "verification_artifact",
+      "role": "semantic_diff_enrichment_transform_tests"
     },
     {
       "ref": "control/proposals/git_substrate_adapters_v1/gix_target_contract.v1.json",
@@ -106,6 +131,7 @@
       "git_substrate_compatibility_assessment_exists",
       "git_substrate_realization_contract_exists",
       "git_substrate_realization_runner_exists",
+      "git_substrate_transforms_are_split_into_gix_and_sem_projection_surfaces",
       "target_contracts_exist_for_gix_and_sem",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
@@ -117,6 +143,7 @@
     "A first Git-substrate semantic example and realization payload now exist.",
     "Compatibility posture and realization workflow contract now exist for the first slice.",
     "A first Git-substrate realization runner now exists and emits normalized manifest/report artifacts.",
-    "The next substantive step after this proposal is to decide whether to split runner-owned Git transforms into narrower adapter artifacts or promote the first realization packet."
+    "Runner-owned Git transform logic is now split into bounded gix and sem emitter artifacts.",
+    "The next substantive step after this proposal is to promote the first realization packet."
   ]
 }
