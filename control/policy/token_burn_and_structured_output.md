@@ -46,17 +46,46 @@ Prose remains useful, but it should be a presentation layer where practical, not
 4. Shared control logic belongs in `codex_home` unless a repo-specific override is truly required.
 5. Repo-local overlays should consume shared policy rather than silently redefining it.
 
+## Token-Burn Strategy Substrates
+
+Token-burn strategies are organized by substrate:
+- shell
+- python
+- git
+
+The policy is stable at the substrate level.
+Specific tools may evolve, but the substrate responsibilities should remain explicit.
+
 ## Required Operator Surface Behaviors
 
-### Bash composition
+### Shell substrate
 
+- Preferred surfaces:
+  - Bashly
+  - Just
 - Bash-based control surfaces should be composed through Bashly or an equivalently explicit wrapper.
+- Just should remain the stable task and workflow verb layer where a named workflow entrypoint is needed.
 - Ad hoc shell scripts are not preferred control surfaces for shared workflows.
+- Structured outputs should be preferred at the shell boundary wherever practical.
 
-### Python surface
+### Python substrate
 
+- Preferred surface:
+  - Marimo
 - Marimo is the preferred shared surface for Python script/app construction where practical.
 - Free-standing Python scripts should be minimized when a Marimo-based surface would keep the workflow more inspectable and materializable.
+
+### Git substrate
+
+- Preferred surfaces:
+  - `gix`
+  - `sem`
+- `gix` should be used as the preferred deterministic Git access surface where practical.
+- `sem` should be used for semantic diff enrichment where the workflow pattern requires more than changed-file truth.
+- Git-centric workflows should prefer stable `repo_state`, `diff_state`, and related structured artifacts over repeated conversational reconstruction.
+
+Reference note for recurring Git-centric token-burn patterns:
+- `/home/_404/src/src-ctrl/scratch/token-burn-patterns.md`
 
 ### JSON boundary
 
@@ -80,8 +109,8 @@ If a workflow is intended to be uniform across repos, its policy belongs here fi
 - `control/github/control_plane_project_queries.md`
 - `skills/tooling-policy/SKILL.md`
 - `control/git-flow/*`
+- `src-ctrl/scratch/token-burn-patterns.md` as the current Git-centric pattern note
 
 ## Acceptance Marker
 
 `codex_home` is the shared control surface for cross-repo deterministic operator policy, including token-burn reduction and structured-output guidance.
-
