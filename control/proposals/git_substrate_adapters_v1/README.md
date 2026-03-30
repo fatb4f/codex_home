@@ -30,6 +30,8 @@ Files:
 - `gix_runtime_helper/Cargo.toml`
 - `gix_runtime_helper/Cargo.lock`
 - `gix_runtime_helper/src/main.rs`
+- `git_capability_service_policy.v1.json`
+- `git_capability_service_api_contract.v1.json`
 - `shell_port_inventory.v1.json`
 - `python_port_inventory.v1.json`
 - `proposal_register.v1.json`
@@ -51,6 +53,7 @@ Current status:
 - `sem` now has a real local runtime path through the checked-out `ataraxy/sem` source tree
 - `gix` now has a real local runtime path through a repo-local Rust helper that uses the `gix` crate directly
 - `gix` and `sem` are closed for this tranche through `adapter_closeout.v1.json`
+- a policy-enforced Git capability service contract now exists for operationalizing the runtime surfaces without exposing a generic Git shell
 
 Direction:
 - canonical metadata remains authority
@@ -62,6 +65,7 @@ Direction:
 - `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner
 - runtime contracts now separate minimal projection proof from crate-backed/local-backend integration work
 - adapter closeout is explicit for the first real-runtime tranche
+- policy-enforced Git access is modeled as a capability service with task-shaped operations and deterministic gates outside the model
 - port inventories now separate real operator-entrypoint migration candidates from projection internals
 - the runner now distinguishes real backend execution from minimal fallback in backend reports
 - the `gix` runtime path is crate-backed and does not rely on parsing the `gix` CLI output surface

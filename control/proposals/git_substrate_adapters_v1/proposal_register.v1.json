@@ -121,6 +121,16 @@
       "role": "git_substrate_adapter_closeout"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/git_capability_service_policy.v1.json",
+      "kind": "policy_artifact",
+      "role": "git_capability_service_policy"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/git_capability_service_api_contract.v1.json",
+      "kind": "service_contract",
+      "role": "git_capability_service_api"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/emit_gix_runtime.py",
       "kind": "runtime_artifact",
       "role": "deterministic_git_fact_runtime_probe"
@@ -195,10 +205,12 @@
       "git_substrate_transforms_are_split_into_gix_and_sem_projection_surfaces",
       "target_contracts_exist_for_gix_and_sem",
       "runtime_contracts_exist_for_gix_and_sem",
-      "sem_real_runtime_path_is_integrated",
-      "gix_real_runtime_path_is_integrated",
-      "shell_and_python_port_inventories_exist",
-      "normalized_realization_pattern_is_named_as_the_reuse_path"
+    "sem_real_runtime_path_is_integrated",
+    "gix_real_runtime_path_is_integrated",
+    "git_capability_service_policy_exists",
+    "git_capability_service_api_contract_exists",
+    "shell_and_python_port_inventories_exist",
+    "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
     "still_required_before_amendment": []
   },
@@ -212,6 +224,7 @@
     "Real-runtime contracts for gix and sem now distinguish the completed first adapter tranche from the minimal proof path.",
     "sem now has a real local runtime integration path via ataraxy/sem.",
     "gix now has a real local runtime integration path via a repo-local Rust helper crate that uses the gix crate directly.",
+    "A policy-enforced Git capability service contract now exists to keep task authorization and risk gating outside the model.",
     "Shell and Python port inventories now define the next repo-local migration tranche.",
     "The next substantive step after this proposal is script migration, not more adapter framing."
   ]
