@@ -2,7 +2,7 @@
   "artifact_type": "port_inventory",
   "artifact_version": "v1",
   "inventory_id": "shell_port_inventory",
-  "status": "planned",
+  "status": "in_progress",
   "target_backend": "bashly",
   "selection_rule": "Only operator-facing or reusable shell entrypoints are candidates. Shared helper files and packet-local runtime wrappers remain out of scope unless promoted explicitly.",
   "candidates": [
@@ -11,9 +11,9 @@
       "current_role": "operator_entrypoint",
       "complexity": "medium",
       "backend_fit": "strong",
-      "recommendation": "port_first",
+      "recommendation": "ported_adapter_surface_available",
       "priority": "high",
-      "notes": "Clear CLI/env surface and explicit operator workflow. Good first real shell port."
+      "notes": "Bashly-backed adapter surface now exists at codex_home/control/github/bootstrap_control_plane_project_bashly/ with generated help/output path. Primary cutover is still pending."
     },
     {
       "path": "kernel/scripts/run_metadata_metaschema_lane.sh",

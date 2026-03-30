@@ -2,7 +2,7 @@
   "artifact_type": "port_inventory",
   "artifact_version": "v1",
   "inventory_id": "python_port_inventory",
-  "status": "planned",
+  "status": "in_progress",
   "target_backend": "jsonargparse",
   "selection_rule": "Only operator-facing or stable workflow entrypoints are candidates. Proposal-local tests and minimal emitters remain projection internals, not migration targets.",
   "candidates": [
@@ -11,18 +11,18 @@
       "current_role": "operator_entrypoint",
       "complexity": "medium",
       "backend_fit": "strong",
-      "recommendation": "port_first",
+      "recommendation": "ported_adapter_surface_available",
       "priority": "high",
-      "notes": "Clear CLI surface with a single packet argument and flags. Good first real Python CLI port."
+      "notes": "jsonargparse-backed surface now exists at kernel/scripts/run_chatgpt_packet_file_jsonargparse.py. Behavior is shared with the legacy runner; primary cutover is still pending."
     },
     {
       "path": "kernel/scripts/run_problem_set_surface.py",
       "current_role": "operator_entrypoint",
       "complexity": "medium",
       "backend_fit": "strong",
-      "recommendation": "port_first",
+      "recommendation": "ported_adapter_surface_available",
       "priority": "high",
-      "notes": "Explicit input and run-id surface; a good jsonargparse-backed CLI target."
+      "notes": "jsonargparse-backed surface now exists at kernel/scripts/run_problem_set_surface_jsonargparse.py. Behavior is shared with the legacy runner; primary cutover is still pending."
     },
     {
       "path": "kernel/scripts/run_reviewed_structural_draft_surface.py",

@@ -1,0 +1,17 @@
+name: bootstrap-control-plane-project
+help: Bootstrap the shared GitHub project, labels, and milestones for the control-plane repos
+version: 0.1.0
+
+environment_variables:
+- name: OWNER
+  help: GitHub owner for the project and repos
+  default: fatb4f
+- name: PROJECT_TITLE
+  help: GitHub project title
+  default: Control Plane
+- name: PROJECT_NUMBER
+  help: Reuse an existing GitHub project number instead of creating one
+
+examples:
+- OWNER=fatb4f PROJECT_TITLE="Control Plane" bootstrap-control-plane-project
+- PROJECT_NUMBER=12 bootstrap-control-plane-project
