@@ -3,7 +3,7 @@
   "artifact_version": "v1",
   "profile_id": "git_substrate_adapters_v1",
   "title": "Git Substrate Adapter Contract Profile",
-  "status": "draft",
+  "status": "implemented",
   "base_model_refs": [
     "control/proposals/cli_extension_v2/basis/metadata/canonical_semantic_model.schema.json",
     "control/proposals/cli_extension_v2/basis/metadata/projection_artifact_manifest.schema.json"
@@ -96,6 +96,9 @@
     "a Git-substrate realization payload exists for the first gix and sem target set",
     "a compatibility assessment exists for git_substrate_role and the new target kinds",
     "a Git-substrate realization workflow contract exists for the first slice",
-    "a Git-substrate realization runner exists for the first slice"
+    "a Git-substrate realization runner exists for the first slice",
+    "gix now has a real crate-backed runtime integration path",
+    "sem now has a real runtime integration path",
+    "the first real-runtime adapter tranche is explicitly closed"
   ]
 }

@@ -1,8 +1,6 @@
 # Git Substrate Adapters V1 Proposal
 
-This proposal opens the Git-substrate adapter-contract lane on top of the stabilized CLI realization pattern.
-
-It does not implement `gix` or `sem`.
+This proposal defines and closes the first Git-substrate adapter tranche on top of the stabilized CLI realization pattern.
 
 It exists to:
 - classify `gix` and `sem` as projected Git-substrate adapters
@@ -38,7 +36,7 @@ Files:
 - `gate_result.v1.json`
 
 Current status:
-- proposal draft for Git-substrate projected adapters
+- proposal tranche for Git-substrate projected adapters
 - `gix` is scoped as the deterministic Git fact surface
 - `sem` is scoped as the semantic diff enrichment surface
 - target contracts exist at the proposal boundary
@@ -52,6 +50,7 @@ Current status:
 - first shell and Python port inventories now exist for the repo-local scripts
 - `sem` now has a real local runtime path through the checked-out `ataraxy/sem` source tree
 - `gix` now has a real local runtime path through a repo-local Rust helper that uses the `gix` crate directly
+- `gix` and `sem` are closed for this tranche through `adapter_closeout.v1.json`
 
 Direction:
 - canonical metadata remains authority
@@ -62,6 +61,7 @@ Direction:
 - the unified runner remains the primary operator surface and owns aggregation plus normalized manifest/report emission
 - `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner
 - runtime contracts now separate minimal projection proof from crate-backed/local-backend integration work
+- adapter closeout is explicit for the first real-runtime tranche
 - port inventories now separate real operator-entrypoint migration candidates from projection internals
 - the runner now distinguishes real backend execution from minimal fallback in backend reports
 - the `gix` runtime path is crate-backed and does not rely on parsing the `gix` CLI output surface

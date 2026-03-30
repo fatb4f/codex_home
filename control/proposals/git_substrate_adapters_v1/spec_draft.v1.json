@@ -3,8 +3,8 @@
   "artifact_version": "v1",
   "proposal_id": "git-substrate-adapters-v1",
   "title": "Git Substrate Adapters V1",
-  "status": "draft",
-  "summary": "Defines the proposal boundary for Git-substrate projected adapters so deterministic Git-state and semantic-diff surfaces can be realized without elevating adapter outputs into authority.",
+  "status": "implemented",
+  "summary": "Defines and closes the first proposal boundary for Git-substrate projected adapters so deterministic Git-state and semantic-diff surfaces are realized without elevating adapter outputs into authority.",
   "source_inputs": [
     {
       "ref": "control/policy/token_burn_and_structured_output.registry.json",
@@ -58,18 +58,7 @@
       ]
     }
   },
-  "open_items": [
-    {
-      "id": "open-001",
-      "title": "Git semantic profile",
-      "detail": "The canonical object and relation profile for Git-state and semantic-diff surfaces is not yet specified."
-    },
-    {
-      "id": "open-002",
-      "title": "Realization payload",
-      "detail": "A Git-substrate realization payload has not yet been defined against the normalized realization pattern."
-    }
-  ],
+  "open_items": [],
   "resolved_items": [
     {
       "id": "resolved-001",
@@ -110,6 +99,21 @@
       "id": "resolved-008",
       "title": "Narrower transform surfaces",
       "detail": "The runner-owned Git transforms have been split into bounded gix and sem emitter artifacts while keeping the unified runner as the primary operator surface."
+    },
+    {
+      "id": "resolved-009",
+      "title": "gix real runtime integration",
+      "detail": "gix now has a real crate-backed runtime path through the repo-local Rust helper that emits repo_state and diff_state."
+    },
+    {
+      "id": "resolved-010",
+      "title": "sem real runtime integration",
+      "detail": "sem now has a real runtime path through the local sem source tree and emits semantic_diff plus review_basis."
+    },
+    {
+      "id": "resolved-011",
+      "title": "Adapter closeout",
+      "detail": "The first real-runtime adapter tranche is explicitly closed through adapter_closeout.v1.json; remaining work is script migration, not adapter framing."
     }
   ]
 }

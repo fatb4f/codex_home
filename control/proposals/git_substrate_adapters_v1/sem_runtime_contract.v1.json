@@ -3,8 +3,8 @@
   "artifact_version": "v1",
   "runtime_id": "sem_runtime_contract",
   "backend": "sem",
-  "status": "planned",
-  "purpose": "Define the first real enrichment-side adapter execution contract for semantic diff interpretation downstream of deterministic Git fact capture.",
+  "status": "implemented",
+  "purpose": "Define and realize the first real enrichment-side adapter execution contract for semantic diff interpretation downstream of deterministic Git fact capture.",
   "execution_contract": {
     "required_inputs": [
       "repository_ref",
@@ -42,7 +42,7 @@
   "promotion_boundary": {
     "allowed_now": [
       "runtime contract definition",
-      "real enrichment verification plan",
+      "real enrichment verification",
       "report fields that distinguish minimal from real enrichment execution"
     ],
     "not_yet_allowed": [
@@ -50,5 +50,9 @@
       "running sem before gix diff capture",
       "treating review_basis output as canonical Git state"
     ]
+  },
+  "implementation_artifacts": {
+    "runtime_emitter": "control/proposals/git_substrate_adapters_v1/emit_sem_runtime.py",
+    "runtime_resolution": "resolve against the checked-out ataraxy/sem source tree before falling back to PATH"
   }
 }
