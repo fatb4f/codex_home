@@ -74,6 +74,9 @@ Specific tools may evolve, but the substrate responsibilities should remain expl
   - Marimo
 - Marimo is the preferred shared surface for Python script/app construction where practical.
 - Free-standing Python scripts should be minimized when a Marimo-based surface would keep the workflow more inspectable and materializable.
+- Marimo notebooks may call deterministic wrapper surfaces and hydrate notebook state from their outputs.
+- In that model, Marimo may serve as a hydratable registry, inspection surface, and derivation surface over deterministic artifacts.
+- Deterministic wrappers remain the fact-producing boundary; Marimo should not silently replace or redefine their contracts.
 
 ### Git substrate
 
@@ -83,6 +86,7 @@ Specific tools may evolve, but the substrate responsibilities should remain expl
 - `gix` should be used as the preferred deterministic Git access surface where practical.
 - `sem` should be used for semantic diff enrichment where the workflow pattern requires more than changed-file truth.
 - Git-centric workflows should prefer stable `repo_state`, `diff_state`, and related structured artifacts over repeated conversational reconstruction.
+- Marimo may consume these Git-oriented deterministic artifacts as a hydratable registry layer, but the canonical capture should remain in the wrapper-produced artifacts.
 
 Reference note for recurring Git-centric token-burn patterns:
 - `/home/_404/src/src-ctrl/scratch/token-burn-patterns.md`
