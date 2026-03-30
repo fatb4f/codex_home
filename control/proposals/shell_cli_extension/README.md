@@ -7,13 +7,16 @@ Files:
 - `proposal_register.v1.json`
 - `gate_result.v1.json`
 - `extension_profile.v1.json`
+- `extension_constraints.schema.json`
+- `extension_constraints.example.json`
 - `canonical_semantic_model.shell_cli.example.json`
 - `projection_artifact_manifest.shell_cli.example.json`
 
 Current status:
-- held at proposal register until the extension profile is formalized enough for promotion
+- proposal-ready for amendment review, with schema-backed extension constraints in place
 
 Direction:
 - canonical metadata model remains authority
 - shell implementation backends are projection targets
 - shell verification backends are projection consumers
+- shell/CLI extension rules are constrained explicitly without modifying the base metadata schemas

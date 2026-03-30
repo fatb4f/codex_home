@@ -76,13 +76,8 @@
   "open_items": [
     {
       "id": "open-001",
-      "title": "Command-semantic profile shape",
-      "detail": "The exact semantic object and relation profile for commands, params, env bindings, and verification expectations has not yet been formalized."
-    },
-    {
-      "id": "open-002",
       "title": "Projection binding granularity",
-      "detail": "The exact binding strategy from shell semantic targets to Bashly/argc/Argbash/Bats/ShellSpec outputs remains to be formalized."
+      "detail": "The exact binding strategy from shell semantic targets to Bashly/argc/Argbash/Bats/ShellSpec outputs remains to be formalized beyond the demonstrated Bashly and Bats example posture."
     }
   ],
   "resolved_items": [
@@ -95,6 +90,11 @@
       "id": "resolved-002",
       "title": "Projection posture",
       "detail": "Shell scripts, wrappers, and test harnesses are treated as projection targets or consumers, not metadata authority."
+    },
+    {
+      "id": "resolved-003",
+      "title": "Extension constraint posture",
+      "detail": "The shell/CLI extension profile is now backed by schema-validated extension constraints rather than prose-only conventions."
     }
   ]
 }

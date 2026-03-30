@@ -32,6 +32,16 @@
       "role": "projection_binding_contract"
     },
     {
+      "ref": "control/proposals/shell_cli_extension/extension_constraints.schema.json",
+      "kind": "schema_artifact",
+      "role": "schema_backed_extension_constraints"
+    },
+    {
+      "ref": "control/proposals/shell_cli_extension/extension_constraints.example.json",
+      "kind": "example_artifact",
+      "role": "validated_extension_constraint_example"
+    },
+    {
       "ref": "control/shell/shell_script_inventory.json",
       "kind": "inventory_artifact",
       "role": "current_projection_baseline"
@@ -59,12 +69,11 @@
       "implementation_backends_are_classified_as_projection_targets",
       "verification_backends_are_classified_as_projection_consumers",
       "command_and_parameter_semantics_are_expressible_without_parallel_authority_model",
-      "projection_binding_strategy_is_explicit"
+      "projection_binding_strategy_is_explicit",
+      "schema_backed_extension_constraints_exist"
     ],
     "still_required_before_kernel": [
-      "formal shell_cli semantic profile",
-      "formal projection binding examples for implementation and verification backends",
-      "compatibility impact assessment for metadata-model extension"
+      "formal projection binding examples for implementation and verification backends"
     ]
   },
   "notes": [

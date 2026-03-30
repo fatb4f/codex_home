@@ -123,8 +123,12 @@
       }
     ]
   },
+  "constraint_layer": {
+    "schema_ref": "control/proposals/shell_cli_extension/extension_constraints.schema.json",
+    "example_ref": "control/proposals/shell_cli_extension/extension_constraints.example.json",
+    "status": "present_and_validated"
+  },
   "open_items": [
-    "formalize attribute-level requiredness as schema-backed extension constraints",
     "decide whether verification targets warrant a narrower target_kind than other"
   ]
 }

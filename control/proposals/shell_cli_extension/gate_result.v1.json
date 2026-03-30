@@ -3,7 +3,7 @@
   "artifact_version": "v1",
   "proposal_id": "shell-cli-extension-profile",
   "gate_status": "conditional_pass_with_underspecification",
-  "result_summary": "The shell/CLI extension direction is coherent, grounded in the existing metadata model, demonstrated with validated examples, and compatibility-classified as non-breaking at the base-schema level. The proposal may advance beyond pure concept status, but kernel amendment should still wait until extension-constraint posture is decided.",
+  "result_summary": "The shell/CLI extension direction is coherent, grounded in the existing metadata model, demonstrated with validated examples, compatibility-classified as non-breaking at the base-schema level, and now backed by an explicit schema-backed extension-constraint layer. The proposal is ready to move beyond the proposal register toward amendment review.",
   "passes": [
     "existing metadata model is kept as the authority baseline",
     "shell assets are classified as projection assets",
@@ -13,16 +13,15 @@
     "a shell_cli extension profile has been defined against the existing canonical semantic model",
     "an example canonical semantic model for shell_cli validates against the existing metadata schema",
     "an example projection artifact manifest for shell_cli validates against the existing metadata schema",
-    "compatibility assessment classifies the current profile as non-breaking to the base metadata schemas"
+    "compatibility assessment classifies the current profile as non-breaking to the base metadata schemas",
+    "schema-backed extension constraints exist and validate"
   ],
   "underspecified_items": [
-    "formal projection binding rules beyond the demonstrated Bashly and Bats examples, including argc, Argbash, and ShellSpec",
-    "whether shell_cli profile constraints should remain profile-level conventions or become schema-backed extension constraints"
+    "formal projection binding rules beyond the demonstrated Bashly and Bats examples, including argc, Argbash, and ShellSpec"
   ],
   "next_actions": [
     "define additional backend projection examples as needed",
-    "decide extension-constraint posture before kernel amendment",
-    "re-run proposal gating after the extension profile is explicit"
+    "prepare amendment-facing artifacts for the metadata lane once backend coverage is sufficient"
   ],
-  "promotion_decision": "proposal_register_pass_pending_extension_constraint_decision"
+  "promotion_decision": "ready_for_amendment_review"
 }
