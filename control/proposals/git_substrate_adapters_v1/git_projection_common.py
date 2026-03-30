@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -145,3 +146,89 @@ def emit_semantic_diff(semantic_obj: GitObject, review_obj: GitObject, diff_stat
 def write_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+
+
+def command_exists(command: str) -> bool:
+    result = subprocess.run(
+        ["bash", "-lc", f"command -v {command} >/dev/null 2>&1"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
+def resolve_sem_binary() -> tuple[str | None, str]:
+    explicit = os.environ.get("SEM_BIN")
+    if explicit:
+        path = Path(explicit).expanduser().resolve()
+        if path.exists() and path.is_file():
+            return str(path), "env"
+    local_debug = Path("/home/_404/src/ataraxy/sem/crates/target/debug/sem")
+    if local_debug.exists() and local_debug.is_file():
+        return str(local_debug), "local_debug"
+    if command_exists("sem"):
+        return "sem", "path"
+    return None, "unavailable"
+
+
+def resolve_maturin() -> tuple[str | None, str]:
+    explicit = os.environ.get("MATURIN_BIN")
+    if explicit:
+        path = Path(explicit).expanduser().resolve()
+        if path.exists() and path.is_file():
+            return str(path), "env"
+    if command_exists("maturin"):
+        return "maturin", "path"
+    cargo_bin = Path.home() / ".cargo" / "bin" / "maturin"
+    if cargo_bin.exists() and cargo_bin.is_file():
+        return str(cargo_bin), "cargo_home"
+    return None, "unavailable"
+
+
+def parse_sem_output(stdout: str) -> dict[str, Any]:
+    cleaned = stdout.strip()
+    if not cleaned:
+        return {
+            "summary": {
+                "fileCount": 0,
+                "added": 0,
+                "modified": 0,
+                "deleted": 0,
+                "moved": 0,
+                "renamed": 0,
+                "total": 0,
+            },
+            "changes": [],
+        }
+    ansi_free = cleaned.replace("\x1b[2m", "").replace("\x1b[0m", "")
+    if ansi_free == "No changes detected.":
+        return {
+            "summary": {
+                "fileCount": 0,
+                "added": 0,
+                "modified": 0,
+                "deleted": 0,
+                "moved": 0,
+                "renamed": 0,
+                "total": 0,
+            },
+            "changes": [],
+        }
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError as exc:
+        raise GitProjectionError(f"sem output was not valid JSON: {exc}") from exc
+
+
+def build_review_basis(review_obj: GitObject, repo_obj: GitObject, diff_state: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "document_type": "review_basis",
+        "repository_ref": repo_obj.attributes["repository_ref"],
+        "repo_state_ref": repo_obj.ref,
+        "diff_state_ref": diff_state.get("source_ref", "object:codex_home_diff_state"),
+        "requires_repo_state_and_diff_state": True,
+        "basis_rule": review_obj.attributes["basis_rule"],
+        "comparison_ref": diff_state["comparison_ref"],
+        "comparison_base": diff_state["comparison_base"],
+    }

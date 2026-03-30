@@ -120,6 +120,19 @@ def run_child(cwd: Path, script_name: str, output_root: Path) -> dict[str, Any]:
     return json.loads(result.stdout)
 
 
+def run_check(cwd: Path, script_name: str) -> tuple[dict[str, Any], bool]:
+    result = subprocess.run(
+        [sys.executable, str(cwd / script_name), "--check-only"],
+        cwd=cwd,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    payload_text = result.stdout if result.stdout.strip() else result.stderr
+    data = json.loads(payload_text)
+    return data, result.returncode == 0
+
+
 def validate_payload(cwd: Path, payload: dict[str, Any]) -> tuple[dict[str, GitObject], dict[str, Any]]:
     require_keys(payload, ["authority_inputs", "realization_scope", "targets", "workflow"], "payload")
     authority = payload["authority_inputs"]
@@ -222,10 +235,30 @@ def main(argv: list[str] | None = None) -> int:
         backend_reports: dict[str, Any] = {"gix": {"targets": []}, "sem": {"targets": []}}
         gix_root = root / "build" / "git" / "codex_home"
         sem_root = root / "build" / "git" / "codex_home"
-        gix_run = run_child(cwd, "emit_gix_minimal.py", gix_root)
-        sem_run = run_child(cwd, "emit_sem_minimal.py", sem_root)
-        gix_report = load_json(Path(gix_run["report"]))
-        sem_report = load_json(Path(sem_run["report"]))
+        gix_runtime_check, gix_runtime_ok = run_check(cwd, "emit_gix_runtime.py")
+        sem_runtime_check, sem_runtime_ok = run_check(cwd, "emit_sem_runtime.py")
+
+        if gix_runtime_ok:
+            gix_run = run_child(cwd, "emit_gix_runtime.py", gix_root)
+            gix_report = load_json(Path(gix_run["report"]))
+            gix_runtime_status = "ok"
+            gix_mode = "real_runtime"
+        else:
+            gix_run = run_child(cwd, "emit_gix_minimal.py", gix_root)
+            gix_report = load_json(Path(gix_run["report"]))
+            gix_runtime_status = "runtime_unavailable_fallback_minimal"
+            gix_mode = "minimal_fallback"
+
+        if sem_runtime_ok:
+            sem_run = run_child(cwd, "emit_sem_runtime.py", sem_root)
+            sem_report = load_json(Path(sem_run["report"]))
+            sem_runtime_status = "ok"
+            sem_mode = "real_runtime"
+        else:
+            sem_run = run_child(cwd, "emit_sem_minimal.py", sem_root)
+            sem_report = load_json(Path(sem_run["report"]))
+            sem_runtime_status = "runtime_unavailable_fallback_minimal"
+            sem_mode = "minimal_fallback"
 
         for target in payload["targets"]:
             backend = str(target["backend"])
@@ -243,7 +276,15 @@ def main(argv: list[str] | None = None) -> int:
                 output_path.parent.mkdir(parents=True, exist_ok=True)
                 output_path.write_text(source_path.read_text(encoding="utf-8"), encoding="utf-8")
                 if role in {"repo_state_surface", "diff_state_surface"}:
-                    backend_reports["gix"]["targets"].append({"target_id": target_id, "status": "ok", "kind": role})
+                    backend_reports["gix"]["targets"].append(
+                        {
+                            "target_id": target_id,
+                            "status": "ok",
+                            "kind": role,
+                            "runtime_status": gix_runtime_status,
+                            "runtime_mode": gix_mode,
+                        }
+                    )
                 else:
                     raise RealizationError(f"target {target_id}: unsupported gix role {role!r}")
                 emitted.append(
@@ -267,7 +308,15 @@ def main(argv: list[str] | None = None) -> int:
                     raise RealizationError(f"target {target_id}: expected sem output missing: {source_path}")
                 output_path.parent.mkdir(parents=True, exist_ok=True)
                 output_path.write_text(source_path.read_text(encoding="utf-8"), encoding="utf-8")
-                backend_reports["sem"]["targets"].append({"target_id": target_id, "status": "ok", "kind": "semantic_diff_surface"})
+                backend_reports["sem"]["targets"].append(
+                    {
+                        "target_id": target_id,
+                        "status": "ok",
+                        "kind": "semantic_diff_surface",
+                        "runtime_status": sem_runtime_status,
+                        "runtime_mode": sem_mode,
+                    }
+                )
                 emitted.append(
                     {
                         "target_id": target_id,
@@ -284,8 +333,13 @@ def main(argv: list[str] | None = None) -> int:
                     }
                 )
 
+        review_basis_path = sem_root / "review_basis.json"
+        if review_basis_path.exists():
+            backend_reports["sem"]["review_basis_output"] = str(review_basis_path)
         backend_reports["gix"]["emitter_report"] = gix_report
+        backend_reports["gix"]["runtime_check"] = gix_runtime_check
         backend_reports["sem"]["emitter_report"] = sem_report
+        backend_reports["sem"]["runtime_check"] = sem_runtime_check
 
         manifest_path = build_manifest(root, payload, emitted, cwd)
         report_path = build_report(root, payload_path, emitted, backend_reports, cwd)

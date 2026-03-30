@@ -70,3 +70,6 @@ def test_realize_emits_git_projection_tree(tmp_path: Path):
     assert report_data["schema_version"] == "v2"
     assert report_data["backend_reports"]["gix"]["targets"]
     assert report_data["backend_reports"]["sem"]["targets"]
+    assert report_data["backend_reports"]["gix"]["runtime_check"]["runtime_kind"] == "gix"
+    assert report_data["backend_reports"]["sem"]["runtime_check"]["runtime_kind"] == "sem"
+    assert report_data["backend_reports"]["sem"]["targets"][0]["runtime_mode"] in {"real_runtime", "minimal_fallback"}

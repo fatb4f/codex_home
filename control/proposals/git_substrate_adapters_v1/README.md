@@ -47,6 +47,8 @@ Current status:
 - the runner-owned Git transform logic is now split into narrower `gix` and `sem` projection emitters
 - real-runtime contracts for `gix` and `sem` are now explicit
 - first shell and Python port inventories now exist for the repo-local scripts
+- `sem` now has a real local runtime path through the checked-out `ataraxy/sem` source tree
+- `gix` still falls back to the minimal emitter with explicit runtime-unavailable reporting because no local `gix` runtime source is present
 
 Direction:
 - canonical metadata remains authority
@@ -58,3 +60,4 @@ Direction:
 - `emit_gix_minimal.py` and `emit_sem_minimal.py` are bounded projection surfaces under that runner
 - runtime contracts now separate minimal projection proof from real adapter integration work
 - port inventories now separate real operator-entrypoint migration candidates from projection internals
+- the runner now distinguishes real backend execution from minimal fallback in backend reports
