@@ -60,6 +60,16 @@
       "role": "git_substrate_realization_contract"
     },
     {
+      "ref": "control/proposals/git_substrate_adapters_v1/control_realize_git_substrate_adapters_v1.py",
+      "kind": "workflow_artifact",
+      "role": "git_substrate_realization_runner"
+    },
+    {
+      "ref": "control/proposals/git_substrate_adapters_v1/test_control_realize_git_substrate_adapters_v1.py",
+      "kind": "verification_artifact",
+      "role": "git_substrate_realization_runner_tests"
+    },
+    {
       "ref": "control/proposals/git_substrate_adapters_v1/gix_target_contract.v1.json",
       "kind": "target_contract",
       "role": "deterministic_git_fact_target"
@@ -95,8 +105,8 @@
       "git_substrate_realization_payload_exists",
       "git_substrate_compatibility_assessment_exists",
       "git_substrate_realization_contract_exists",
+      "git_substrate_realization_runner_exists",
       "target_contracts_exist_for_gix_and_sem",
-      "implementation_is_explicitly_deferred_until_after_contract_review",
       "normalized_realization_pattern_is_named_as_the_reuse_path"
     ],
     "still_required_before_amendment": []
@@ -106,6 +116,7 @@
     "gix and sem are projected adapters, not authority surfaces.",
     "A first Git-substrate semantic example and realization payload now exist.",
     "Compatibility posture and realization workflow contract now exist for the first slice.",
-    "The next substantive step after this proposal is implementation of the Git-substrate realization runner."
+    "A first Git-substrate realization runner now exists and emits normalized manifest/report artifacts.",
+    "The next substantive step after this proposal is to decide whether to split runner-owned Git transforms into narrower adapter artifacts or promote the first realization packet."
   ]
 }

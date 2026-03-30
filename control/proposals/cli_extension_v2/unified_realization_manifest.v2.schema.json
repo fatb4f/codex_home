@@ -53,6 +53,7 @@
           "repo_path": { "type": "string" },
           "output_path": { "type": "string" },
           "source_project_root": { "type": "string" },
+          "upstream_deterministic_input": { "type": "string" },
           "semantic_inputs": {
             "type": "array",
             "items": { "type": "string" }

@@ -100,6 +100,11 @@
       "id": "resolved-006",
       "title": "Realization workflow contract",
       "detail": "A Git-substrate realization workflow contract now exists and explicitly reuses the normalized manifest/report pattern."
+    },
+    {
+      "id": "resolved-007",
+      "title": "Realization runner",
+      "detail": "A first Git-substrate realization runner now exists and emits repo_state, diff_state, semantic_diff, plus normalized manifest/report artifacts."
     }
   ]
 }

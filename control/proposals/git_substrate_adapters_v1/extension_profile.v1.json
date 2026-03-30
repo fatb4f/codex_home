@@ -88,15 +88,14 @@
       }
     ]
   },
-  "open_items": [
-    "implement the first Git-substrate realization runner against the normalized contract"
-  ],
+  "open_items": [],
   "resolved_items": [
     "gix and sem are classified as projected Git-substrate adapters rather than authority surfaces",
     "the normalized realization pattern from cli_extension_v2 is the intended implementation path",
     "a Git-substrate semantic example exists for repo_state, diff_state, semantic_diff, and review_basis surfaces",
     "a Git-substrate realization payload exists for the first gix and sem target set",
     "a compatibility assessment exists for git_substrate_role and the new target kinds",
-    "a Git-substrate realization workflow contract exists for the first slice"
+    "a Git-substrate realization workflow contract exists for the first slice",
+    "a Git-substrate realization runner exists for the first slice"
   ]
 }

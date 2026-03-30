@@ -18,6 +18,8 @@ Files:
 - `realization_payload.v1.json`
 - `compatibility_assessment.v1.json`
 - `realization_workflow_contract.v1.md`
+- `control_realize_git_substrate_adapters_v1.py`
+- `test_control_realize_git_substrate_adapters_v1.py`
 - `gix_target_contract.v1.json`
 - `sem_target_contract.v1.json`
 - `proposal_register.v1.json`
@@ -32,11 +34,11 @@ Current status:
 - a first Git-substrate realization payload now exists
 - compatibility posture for `git_substrate_role` now exists
 - a first Git-substrate realization workflow contract now exists
-- implementation and verification runners are intentionally deferred
+- a first Git-substrate realization runner now exists and emits normalized manifest/report artifacts
 
 Direction:
 - canonical metadata remains authority
 - runtime assets remain projection-only
 - Git adapter outputs are structured operational artifacts, not authority
 - `gix` and `sem` are projected adapters over the Git substrate
-- implementation must reuse the normalized realization pattern already established in `cli_extension_v2`
+- implementation reuses the normalized realization pattern already established in `cli_extension_v2`

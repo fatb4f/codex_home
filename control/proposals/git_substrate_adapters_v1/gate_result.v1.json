@@ -3,7 +3,7 @@
   "artifact_version": "v1",
   "proposal_id": "git-substrate-adapters-v1",
   "gate_status": "pass",
-  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear, target contracts for gix and sem exist, and the lane now has a semantic example, realization payload, compatibility posture, and realization workflow contract.",
+  "result_summary": "The Git-substrate adapter direction is coherent with the token-burn policy and the stabilized realization pattern. The authority split is clear, target contracts for gix and sem exist, and the lane now has a semantic example, realization payload, compatibility posture, realization workflow contract, and a first runner that emits normalized manifest/report artifacts.",
   "passes": [
     "existing metadata remains the authority baseline",
     "gix is classified as the deterministic Git fact surface",
@@ -14,13 +14,14 @@
     "a Git-substrate semantic example exists for repo_state, diff_state, semantic_diff, and review_basis surfaces",
     "a first Git-substrate realization payload exists for state_projection and enrichment_projection targets",
     "a compatibility assessment exists for git_substrate_role and the new target kinds",
-    "a Git-substrate realization workflow contract exists for the first slice"
+    "a Git-substrate realization workflow contract exists for the first slice",
+    "a Git-substrate realization runner exists and emits normalized manifest/report artifacts"
   ],
   "underspecified_items": [],
   "next_actions": [
-    "implement the first Git-substrate realization runner against the defined payload and workflow contract",
-    "emit normalized manifest/report artifacts for gix and sem projections",
-    "only after that, implement the first gix and sem transforms"
+    "decide whether to split the current runner-owned Git transforms into narrower gix and sem implementation artifacts",
+    "open the amendment-facing packet for the first Git-substrate realization slice",
+    "only after that, widen the Git-substrate lane beyond the first codex_home example"
   ],
   "promotion_decision": "ready_for_amendment_review"
 }
