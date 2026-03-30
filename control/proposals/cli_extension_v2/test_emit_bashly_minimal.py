@@ -34,11 +34,13 @@ def test_emit_writes_minimal_bashly_project(tmp_path: Path):
 
     bashly_yml = output_root / "src" / "bashly.yml"
     root_partial = output_root / "src" / "root_command.sh"
+    generated_script = output_root / "control-plane-inspect"
     manifest = output_root / "realization_manifest.bashly_minimal.json"
     report = output_root / "realization_report.bashly_minimal.json"
 
     assert bashly_yml.exists()
     assert root_partial.exists()
+    assert generated_script.exists()
     assert manifest.exists()
     assert report.exists()
 
@@ -56,7 +58,12 @@ def test_emit_writes_minimal_bashly_project(tmp_path: Path):
     report_data = json.loads(report.read_text(encoding="utf-8"))
     assert report_data["status"] == "source_surfaces_emitted"
     assert report_data["checks"]["root_partial_shell_syntax"]["ok"] is True
-    assert report_data["checks"]["downstream_bashly_generate"]["status"] in {
-        "ready",
-        "unavailable_in_environment",
-    }
+    assert report_data["checks"]["downstream_bashly_generate"]["discovery"]["status"] in {"ready", "unavailable_in_environment"}
+    assert report_data["checks"]["downstream_bashly_generate"]["generate"]["status"] in {"ok", "unavailable_in_environment", "failed"}
+
+    manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
+    emitted_paths = {item["repo_path"] for item in manifest_data["emitted"]}
+    assert "src/bashly.yml" in emitted_paths
+    assert "src/root_command.sh" in emitted_paths
+    if report_data["checks"]["downstream_bashly_generate"]["generate"]["status"] == "ok":
+        assert "control-plane-inspect" in emitted_paths

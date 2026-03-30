@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -209,6 +210,13 @@ def render_root_partial(command: CliObject) -> str:
     )
 
 
+def cli_name_for_command(command: CliObject) -> str:
+    command_path = command.attributes.get("command_path")
+    if not isinstance(command_path, list) or not command_path:
+        raise TransformError("command_surface.command_path must be a non-empty array")
+    return "-".join(str(part) for part in command_path)
+
+
 def write_file(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
@@ -229,17 +237,57 @@ def check_shell_syntax(root_command_path: Path) -> dict[str, Any]:
     }
 
 
+def resolve_bashly_command() -> list[str] | None:
+    candidates: list[Path] = []
+    path_env = os.environ.get("PATH", "")
+    for entry in path_env.split(":"):
+        if entry:
+            candidates.append(Path(entry) / "bashly")
+    candidates.append(Path.home() / ".local" / "share" / "gem" / "ruby" / "3.4.0" / "bin" / "bashly")
+
+    for candidate in candidates:
+        if candidate.exists() and os.access(candidate, os.X_OK):
+            return [str(candidate)]
+    return None
+
+
 def detect_bashly() -> dict[str, Any]:
+    command = resolve_bashly_command()
+    if command is None:
+        return {
+            "available": False,
+            "command": "bashly generate",
+            "status": "unavailable_in_environment",
+        }
+    return {
+        "available": True,
+        "command": f"{command[0]} generate",
+        "status": "ready",
+    }
+
+
+def run_bashly_generate(project_root: Path) -> dict[str, Any]:
+    command = resolve_bashly_command()
+    if command is None:
+        return {
+            "available": False,
+            "status": "unavailable_in_environment",
+            "command": "bashly generate",
+        }
     result = subprocess.run(
-        ["bash", "-lc", "command -v bashly >/dev/null 2>&1"],
-        check=False,
-        capture_output=True,
+        [*command, "generate"],
+        cwd=project_root,
         text=True,
+        capture_output=True,
+        check=False,
     )
     return {
-        "available": result.returncode == 0,
-        "command": "bashly generate",
-        "status": "ready" if result.returncode == 0 else "unavailable_in_environment",
+        "available": True,
+        "status": "ok" if result.returncode == 0 else "failed",
+        "command": f"{command[0]} generate",
+        "returncode": result.returncode,
+        "stdout": result.stdout.strip(),
+        "stderr": result.stderr.strip(),
     }
 
 
@@ -367,8 +415,27 @@ def main(argv: list[str] | None = None) -> int:
         ]
         syntax_check = check_shell_syntax(root_partial_path)
         bashly_status = detect_bashly()
+        generate_result = run_bashly_generate(output_root)
+        generated_script_path = output_root / cli_name_for_command(command)
+        if generate_result.get("status") == "ok" and generated_script_path.exists():
+            emitted.append(
+                {
+                    "surface_id": "bashly_generated_script",
+                    "repo_path": generated_script_path.name,
+                    "output_path": str(generated_script_path),
+                }
+            )
         manifest_path = emit_manifest(output_root, emitted)
-        report_path = emit_report(output_root, model_path, contract_path, syntax_check, bashly_status)
+        report_path = emit_report(
+            output_root,
+            model_path,
+            contract_path,
+            syntax_check,
+            {
+                "discovery": bashly_status,
+                "generate": generate_result,
+            },
+        )
 
         print(
             json.dumps(
@@ -377,7 +444,7 @@ def main(argv: list[str] | None = None) -> int:
                     "output_root": str(output_root),
                     "manifest": str(manifest_path),
                     "report": str(report_path),
-                    "downstream_bashly_generate": bashly_status["status"],
+                    "downstream_bashly_generate": generate_result["status"],
                 },
                 indent=2,
             )
